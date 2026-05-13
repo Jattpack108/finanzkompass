@@ -57,6 +57,11 @@ await build({
   ],
   minify: false,             // keep readable for debugging; Pages minifies at edge
   logLevel: 'warning',
+  logOverride: {
+    // Third-party RSS library (@astrojs/rss) has a duplicate 'euro' key in
+    // its HTML entity map.  Harmless, not our code.
+    'duplicate-object-key': 'silent',
+  },
 });
 console.log(`✓ Worker bundled  → dist/_worker.js`);
 
