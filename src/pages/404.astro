@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+// Prerender to static 404.html — Cloudflare Pages serves this file automatically
+// (with HTTP 404 status) for any request that does not match a static asset
+// or a Worker route.  This is the official Pages convention.
+export const prerender = true;
+
+// Show 3 most-recent tests as suggestions on the 404 page
+let tests: any[] = [];
+try {
+  const all = await getCollection('tests', ({ data }) => !data.draft);
+  tests = all
+    .sort((a, b) => +new Date(b.data.veroeffentlicht) - +new Date(a.data.veroeffentlicht))
+    .slice(0, 3);
+} catch {
+  tests = [];
+}
+---
+<BaseLayout
+  title="Seite nicht gefunden"
+  description="Diese Seite existiert nicht oder wurde verschoben."
+  noindex={true}
+>
+  <section class="article-hero">
+    <div class="container" style="max-width:780px">
+      <div class="eyebrow">Fehler 404</div>
+      <h1>Hier ist nichts.</h1>
+      <p class="dek">
+        Die gesuchte Seite existiert nicht — vielleicht wurde sie verschoben, der Link ist alt, oder du hast dich vertippt. Kein Problem, hier sind die wahrscheinlichsten Ziele:
+      </p>
+      <div class="hero-actions" style="margin-top:var(--space-8)">
+        <a class="btn btn-primary" href="/">
+          Zur Startseite
+          <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+        <a class="btn-link" href="/finanzen">Alle Finanz-Tests</a>
+        <a class="btn-link" href="/wellbeing">Alle Wellbeing-Tests</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container" style="max-width:780px">
+      <div class="prose">
+        <h2>Suchst du eines davon?</h2>
+        <ul>
+          <li><a href="/finanzen">Finanzen — Neobroker, ETFs, Banking, Steuersoftware</a></li>
+          <li><a href="/wellbeing">Wellbeing — Online-Therapie, Mindfulness, mentale Gesundheit</a></li>
+          <li><a href="/vergleiche">Vergleiche — Direkte Produkt-Duelle</a></li>
+          <li><a href="/ratgeber">Ratgeber — Grundlagen erklärt</a></li>
+          <li><a href="/cashback">Cashback — Wie das Provisions-Teilen funktioniert</a></li>
+          <li><a href="/methodik">Methodik — So testen wir</a></li>
+          <li><a href="/transparenz">Transparenz — Affiliate-Hinweis, Risikohinweise</a></li>
+          <li><a href="/kontakt">Kontakt — Schreib uns</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {tests.length > 0 && (
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-eyebrow"><span class="idx">→</span> · Vorschlag</div>
+            <h2 class="section-title">Die neuesten Tests</h2>
+          </div>
+        </div>
+      </div>
+      <div class="container" style="padding-inline:0">
+        <div class="cards-3">
+          {tests.map((t) => (
+            <article class="card">
+              <div class="card-cat" style={t.data.saeule === 'wellbeing' ? 'color:var(--accent-wellbeing)' : ''}>
+                {t.data.saeule === 'wellbeing' ? 'Wellbeing' : 'Finanzen'} · {t.data.kategorie}
+              </div>
+              <h3 class="card-title">
+                <a href={`/${t.data.saeule === 'wellbeing' ? 'wellbeing' : 'finanzen'}/${t.id.replace(/\.md$/, '')}`}>{t.data.titel}</a>
+              </h3>
+              <p class="card-excerpt">{t.data.beschreibung}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section>
+    <div class="container" style="max-width:780px">
+      <div class="prose">
+        <h3>Hast du einen kaputten Link gefunden?</h3>
+        <p>Sag uns Bescheid: <a href="mailto:korrektur@finanzkompass.de">korrektur@finanzkompass.de</a></p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,10 +1,37 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 export const prerender = true;
+
+// ──────────────────────────────────────────────────────────────────────────
+// TODO: REAL DATA — Pflichtangaben nach §5 TMG / §55 RStV
+// Trage hier deine echten Daten ein und entferne das WIP-Banner unten.
+// ──────────────────────────────────────────────────────────────────────────
+const impressum = {
+  vorname: '[TODO_VORNAME]',
+  nachname: '[TODO_NACHNAME]',
+  strasse: '[TODO_STRASSE_HAUSNUMMER]',
+  plz: '[TODO_PLZ]',
+  ort: '[TODO_ORT]',
+  land: 'Deutschland',
+  telefon: '[TODO_TELEFON_OPTIONAL]',   // optional, kann leer bleiben — dann nur E-Mail
+  email: 'kontakt@finanzkompass.de',
+  // Kleinunternehmer §19 UStG: keine USt-ID, das ist OK
+  ustIdHinweis: 'Kleinunternehmer-Regelung nach §19 UStG. Es wird keine Umsatzsteuer erhoben und ausgewiesen.',
+};
+
+// Auto-detect: sind noch TODOs drin? → Banner zeigen
+const isPlaceholder = (v: string) => v.startsWith('[TODO');
+const hasTodos =
+  isPlaceholder(impressum.vorname) ||
+  isPlaceholder(impressum.nachname) ||
+  isPlaceholder(impressum.strasse) ||
+  isPlaceholder(impressum.plz) ||
+  isPlaceholder(impressum.ort);
 ---
 <BaseLayout
   title="Impressum"
   description="Impressum von Finanzkompass nach §5 TMG."
+  noindex={hasTodos}
 >
   <section class="article-hero">
     <div class="container">
@@ -14,46 +41,86 @@ export const prerender = true;
     </div>
   </section>
 
+  {hasTodos && (
+    <section style="padding-block:var(--space-6);background:var(--accent-secondary-bg);border-block:1px solid var(--accent-secondary)">
+      <div class="container" style="max-width:780px">
+        <p style="margin:0;font-size:var(--text-sm);color:var(--accent-secondary);font-weight:500">
+          ⚠️ Diese Seite enthält noch Platzhalter (<code>[TODO_*]</code>). Die Site ist noch nicht rechtsgültig veröffentlicht. Verantwortlicher / Anschrift / Kontakt müssen ausgefüllt werden, bevor die Site öffentlich beworben wird.
+        </p>
+      </div>
+    </section>
+  )}
+
   <section>
     <div class="container" style="max-width:780px">
       <div class="prose">
-        <h2>Betreiber</h2>
+        <h2>Verantwortlich für den Inhalt nach §55 Abs. 2 RStV</h2>
         <p>
-          [Vorname Nachname]<br />
-          [Straße + Hausnummer]<br />
-          [PLZ Ort]<br />
-          Deutschland
+          {impressum.vorname} {impressum.nachname}<br />
+          {impressum.strasse}<br />
+          {impressum.plz} {impressum.ort}<br />
+          {impressum.land}
         </p>
 
         <h2>Kontakt</h2>
         <p>
-          Telefon: [+49 …]<br />
-          E-Mail: <a href="mailto:kontakt@finanzkompass.de">kontakt@finanzkompass.de</a>
+          E-Mail: <a href={`mailto:${impressum.email}`}>{impressum.email}</a>
+          {!isPlaceholder(impressum.telefon) && (
+            <><br />Telefon: {impressum.telefon}</>
+          )}
         </p>
 
-        <h2>Umsatzsteuer-ID</h2>
-        <p>[USt-ID gem. §27 a UStG — falls vorhanden, sonst entfernen]</p>
+        <h2>Umsatzsteuer</h2>
+        <p>{impressum.ustIdHinweis}</p>
 
-        <h2>Redaktionell Verantwortlicher</h2>
+        <h2>Redaktionell verantwortlich</h2>
         <p>
-          [Vorname Nachname], Anschrift wie oben.
+          Für eigene Beiträge: {impressum.vorname} {impressum.nachname}, Anschrift wie oben.
         </p>
 
-        <h2>Streitschlichtung</h2>
+        <h2>Online-Streitbeilegung</h2>
         <p>
-          Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr" rel="nofollow noopener" target="_blank">https://ec.europa.eu/consumers/odr</a>.
-        </p>
-        <p>
-          Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
+          Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
+          <a href="https://ec.europa.eu/consumers/odr" rel="nofollow noopener" target="_blank">https://ec.europa.eu/consumers/odr</a>.
+          Wir sind weder bereit noch verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
         </p>
 
-        <h2>Haftungshinweise</h2>
+        <h2>Haftung für Inhalte</h2>
         <p>
-          Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.
+          Als Diensteanbieter sind wir gemäß §7 Abs. 1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich.
+          Nach §§8–10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen
+          oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.
+        </p>
+        <p>
+          Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt.
+          Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden
+          entsprechender Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.
+        </p>
+
+        <h2>Haftung für Links</h2>
+        <p>
+          Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese
+          fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber
+          verantwortlich.
+        </p>
+        <p>
+          Affiliate-Links (Provisionslinks) sind als solche im Footer und in der <a href="/transparenz">Transparenz-Seite</a> ausgewiesen.
         </p>
 
         <h2>Urheberrecht</h2>
-        <p>Die durch uns erstellten Inhalte und Werke unterliegen dem deutschen Urheberrecht. Beiträge Dritter sind als solche gekennzeichnet.</p>
+        <p>
+          Die durch uns erstellten Inhalte und Werke unterliegen dem deutschen Urheberrecht. Vervielfältigung, Bearbeitung, Verbreitung und
+          jede Art der Verwertung außerhalb der Grenzen des Urheberrechts bedürfen unserer schriftlichen Zustimmung.
+        </p>
+        <p>
+          Beiträge Dritter sind als solche gekennzeichnet. Sollten Sie auf eine Urheberrechtsverletzung aufmerksam werden, bitten wir um einen
+          entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend entfernen.
+        </p>
+
+        <h2>Stand</h2>
+        <p style="color:var(--text-tertiary);font-size:var(--text-sm)">
+          Impressum-Stand: {new Date().toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}.
+        </p>
       </div>
     </div>
   </section>

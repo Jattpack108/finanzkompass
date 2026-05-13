@@ -1,0 +1,150 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { breadcrumbSchema, formatGermanDate } from '../../lib/seo';
+
+export const prerender = true;
+
+const vergleiche = (await getCollection('vergleiche', ({ data }) => !data.draft))
+  .sort((a, b) => +new Date(b.data.veroeffentlicht) - +new Date(a.data.veroeffentlicht));
+
+const finanze = vergleiche.filter((v) => v.data.saeule === 'finance');
+const wellbeing = vergleiche.filter((v) => v.data.saeule === 'wellbeing');
+const mixed = vergleiche.filter((v) => v.data.saeule === 'mixed');
+
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://finanzkompass.de';
+const breadcrumb = breadcrumbSchema([
+  { name: 'Startseite', url: siteUrl },
+  { name: 'Vergleiche', url: `${siteUrl}/vergleiche` },
+]);
+---
+<BaseLayout
+  title="Vergleiche – Direkte Produkt-Duelle"
+  description="Alle Finanzkompass-Vergleiche im Überblick. Direkte Produkt-Duelle mit identischer Testmethodik. Wir lesen das Kleingedruckte, das Affiliate-Seiten überspringen."
+  jsonLd={breadcrumb}
+>
+  <section class="article-hero">
+    <div class="container">
+      <div class="eyebrow">Ressort</div>
+      <h1>Vergleiche.</h1>
+      <p class="dek">
+        Direkte Produkt-Duelle nach unserer Testmethodik. Gleiche Kriterien, gleicher Zeitraum, gleiches Geld. Wir lesen das Kleingedruckte, das Affiliate-Seiten überspringen — und sagen es klar, wenn es keinen Gewinner gibt.
+      </p>
+      <div class="article-meta">
+        <span><strong>{vergleiche.length}</strong> {vergleiche.length === 1 ? 'Vergleich' : 'Vergleiche'} insgesamt</span>
+        <span class="sep" aria-hidden="true"></span>
+        <span>Aktualisiert: {vergleiche[0] && formatGermanDate(vergleiche[0].data.aktualisiert)}</span>
+      </div>
+    </div>
+  </section>
+
+  {finanze.length > 0 && (
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-eyebrow"><span class="idx">01</span> · Finanzen</div>
+            <h2 class="section-title">Finanz-Produkte im Duell</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="container" style="padding-inline:0">
+        <div class="cards-3">
+          {finanze.map((v) => (
+            <article class="card">
+              <div class="card-cat">Vergleich · Finanzen</div>
+              <h3 class="card-title">
+                <a href={`/vergleiche/${v.id.replace(/\.md$/, '')}`}>{v.data.titel}</a>
+              </h3>
+              <p class="card-excerpt">{v.data.beschreibung}</p>
+              <div class="card-foot">
+                <div class="left">
+                  <span>Die Redaktion</span>
+                  <span class="sep" aria-hidden="true"></span>
+                  <span>{v.data.produkte.length} Produkte</span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {wellbeing.length > 0 && (
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-eyebrow"><span class="idx">02</span> · Wellbeing</div>
+            <h2 class="section-title">Wellbeing-Produkte im Duell</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="container" style="padding-inline:0">
+        <div class="cards-3">
+          {wellbeing.map((v) => (
+            <article class="card">
+              <div class="card-cat" style="color:var(--accent-wellbeing)">Vergleich · Wellbeing</div>
+              <h3 class="card-title">
+                <a href={`/vergleiche/${v.id.replace(/\.md$/, '')}`}>{v.data.titel}</a>
+              </h3>
+              <p class="card-excerpt">{v.data.beschreibung}</p>
+              <div class="card-foot">
+                <div class="left">
+                  <span>Die Redaktion</span>
+                  <span class="sep" aria-hidden="true"></span>
+                  <span>{v.data.produkte.length} Produkte</span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {mixed.length > 0 && (
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-eyebrow"><span class="idx">03</span> · Übergreifend</div>
+            <h2 class="section-title">Themenübergreifend</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="container" style="padding-inline:0">
+        <div class="cards-3">
+          {mixed.map((v) => (
+            <article class="card">
+              <div class="card-cat">Vergleich · Übergreifend</div>
+              <h3 class="card-title">
+                <a href={`/vergleiche/${v.id.replace(/\.md$/, '')}`}>{v.data.titel}</a>
+              </h3>
+              <p class="card-excerpt">{v.data.beschreibung}</p>
+              <div class="card-foot">
+                <div class="left"><span>Die Redaktion</span></div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {vergleiche.length === 0 && (
+    <section>
+      <div class="container" style="max-width:780px">
+        <div class="prose">
+          <h2>Noch keine Vergleiche veröffentlicht.</h2>
+          <p>Wir veröffentlichen Vergleiche nur, wenn wir mindestens zwei Produkte parallel und unter gleichen Bedingungen getestet haben. Die nächsten Vergleiche sind in Vorbereitung.</p>
+          <p><a class="btn btn-primary" href="/#newsletter">Newsletter abonnieren</a></p>
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>

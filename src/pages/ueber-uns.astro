@@ -1,10 +1,33 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 export const prerender = true;
+
+// Author profiles — sync these with Impressum + Schema.org when bios are real.
+// Each `name: '[TODO_*]'` triggers a placeholder badge in the UI.
+const autoren = [
+  {
+    id: 'autor-1',
+    name: '[TODO_AUTOR_1_NAME]',                  // z. B. "Paul Leese"
+    rolle: 'Mitgründer · Redaktionsleitung',
+    schwerpunkt: 'Finanzen — Neobroker, ETFs, Steuern',
+    bio: '[TODO_AUTOR_1_BIO]',                    // 2-3 Sätze fachlicher Hintergrund
+    qualifikation: '[TODO_AUTOR_1_QUALIFIKATION]', // z. B. "B.Sc. Wirtschaftsinformatik, 8 Jahre Erfahrung Fintech"
+  },
+  {
+    id: 'autor-2',
+    name: '[TODO_AUTOR_2_NAME]',
+    rolle: 'Mitgründerin · Redaktion Wellbeing',
+    schwerpunkt: 'Wellbeing — Online-Therapie, Mindfulness',
+    bio: '[TODO_AUTOR_2_BIO]',
+    qualifikation: '[TODO_AUTOR_2_QUALIFIKATION]',
+  },
+];
+
+const hasTodos = autoren.some((a) => a.name.startsWith('[TODO'));
 ---
 <BaseLayout
   title="Über uns"
-  description="Finanzkompass ist ein zweiköpfiges Redaktionsprojekt. Wir testen Finanztools und Wellbeing-Apps auf eigene Kosten."
+  description="Finanzkompass ist ein zweiköpfiges Redaktionsprojekt. Wir testen Finanztools und Wellbeing-Apps auf eigene Kosten, ohne Sponsored Content."
 >
   <section class="article-hero">
     <div class="container">
@@ -16,6 +39,16 @@ export const prerender = true;
     </div>
   </section>
 
+  {hasTodos && (
+    <section style="padding-block:var(--space-6);background:var(--accent-secondary-bg);border-block:1px solid var(--accent-secondary)">
+      <div class="container" style="max-width:780px">
+        <p style="margin:0;font-size:var(--text-sm);color:var(--accent-secondary);font-weight:500">
+          ⚠️ Autoren-Profile enthalten noch Platzhalter. Für YMYL-Inhalte (Finanzen / Gesundheit) sind klar benannte Autor:innen mit nachvollziehbarer Qualifikation eine harte Voraussetzung — Google E-E-A-T.
+        </p>
+      </div>
+    </section>
+  )}
+
   <section>
     <div class="container" style="max-width:780px">
       <div class="prose">
@@ -23,29 +56,128 @@ export const prerender = true;
         <p>Die meisten Menschen suchen Glück entweder im Geld oder im Kopf — selten in beidem gleichzeitig. Wir glauben: Wer seine Finanzen im Griff hat, kann klarer denken. Wer mental stabil ist, trifft bessere Finanzentscheidungen. Beides gehört zusammen.</p>
 
         <h2>Wie wir arbeiten</h2>
-        <p>Jeder Test wird mit einem echten Account durchgeführt, auf eigene Kosten. Wir nehmen keine Produktproben, keine bezahlten Reisen, keine "Editorial Partnerships". Wenn wir ein Produkt empfehlen, haben wir es benutzt — meistens über Wochen oder Monate.</p>
-        <p>Unsere Methodik ist <a href="/methodik">öffentlich dokumentiert</a>. Jede Bewertung folgt denselben Kriterien. Aktualisierungen werden datiert. Fehler korrigieren wir transparent und behalten den ursprünglichen Stand im Versionsverlauf.</p>
+        <p>Jeder Test wird mit einem echten Account durchgeführt, auf eigene Kosten. Wir nehmen keine Produktproben, keine bezahlten Reisen, keine „Editorial Partnerships". Wenn wir ein Produkt empfehlen, haben wir es selbst benutzt — meistens über Wochen oder Monate.</p>
+        <p>Unsere Methodik ist <a href="/methodik">öffentlich dokumentiert</a>. Jede Bewertung folgt denselben Kriterien. Aktualisierungen werden datiert. Fehler korrigieren wir transparent und führen die Korrektur im <a href="https://github.com/Jattpack108/finanzkompass/blob/main/CHANGELOG.md" rel="noopener">Changelog</a>.</p>
 
         <h2>Wie wir uns finanzieren</h2>
         <p>Wenn du ein getestetes Produkt über unsere Links abschließt, erhalten wir eine standardisierte Affiliate-Provision. <strong>Einen Teil davon geben wir als Cashback an dich zurück</strong> — transparent aufgeschlüsselt im jeweiligen Artikel und auf unserer <a href="/cashback">Cashback-Seite</a>.</p>
         <p>Wir nehmen kein Sponsored Content an. Wir verkaufen keine Datenprodukte. Wir bewerben keine Produkte, die wir nicht selbst getestet haben.</p>
 
-        <h2>Wer wir sind</h2>
-        <p>Die Finanzkompass-Redaktion besteht aus zwei Personen mit Hintergründen in Finanzjournalismus und Technologie. Konkrete Namen, Hintergründe und Kontakt findest du im <a href="/impressum">Impressum</a> und auf der <a href="/transparenz">Transparenz-Seite</a>.</p>
+        <h2 id="redaktion">Die Redaktion</h2>
+      </div>
 
+      <div class="autoren-grid">
+        {autoren.map((a) => {
+          const isPlaceholder = a.name.startsWith('[TODO');
+          return (
+            <article class="autor-card" data-placeholder={isPlaceholder}>
+              <div class="autor-avatar" aria-hidden="true">
+                {isPlaceholder ? '?' : a.name.split(' ').map((p) => p[0]).join('').slice(0, 2)}
+              </div>
+              <div class="autor-meta">
+                <div class="autor-rolle">{a.rolle}</div>
+                <h3 class="autor-name">{isPlaceholder ? 'Name folgt' : a.name}</h3>
+                <div class="autor-schwerpunkt">{a.schwerpunkt}</div>
+                <p class="autor-bio">{isPlaceholder ? 'Bio folgt — wir füllen das Profil ergänzen, sobald die Person final benannt ist.' : a.bio}</p>
+                {!isPlaceholder && a.qualifikation && (
+                  <p class="autor-qual"><strong>Qualifikation:</strong> {a.qualifikation}</p>
+                )}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <div class="prose">
         <h2>Was du von uns erwarten kannst</h2>
         <ul>
           <li>Tests mit echten Accounts, nicht Demo-Versionen</li>
           <li>Klare Methodik, transparent dokumentiert</li>
           <li>Update-Datum auf jedem Artikel</li>
           <li>Affiliate-Hinweis auf jeder Seite</li>
-          <li>Quellenangaben für alle Zahlen</li>
+          <li>Quellenangaben für alle Zahlen und Behauptungen</li>
           <li>Risikohinweise, wo es Geld oder Gesundheit betrifft</li>
+          <li>Korrekturen im <a href="https://github.com/Jattpack108/finanzkompass/blob/main/CHANGELOG.md" rel="noopener">öffentlichen Changelog</a></li>
+        </ul>
+
+        <h2>Was wir nicht tun</h2>
+        <ul>
+          <li>Kein Sponsored Content, keine bezahlten Reviews</li>
+          <li>Keine Produktproben unter Bedingungen</li>
+          <li>Keine Artikel zur Freigabe an Anbieter</li>
+          <li>Keine Schönrede für höhere Provisionen</li>
+          <li>Keine persönliche Anlage- oder Therapieberatung</li>
         </ul>
 
         <h2>Kontakt</h2>
-        <p>Feedback, Hinweise oder ein Fehler entdeckt? <a href="/kontakt">Schreib uns</a> — oder direkt an <a href="mailto:kontakt@finanzkompass.de">kontakt@finanzkompass.de</a>.</p>
+        <p>Feedback, Hinweise oder Fehler? <a href="/kontakt">Schreib uns</a> — oder direkt an <a href="mailto:kontakt@finanzkompass.de">kontakt@finanzkompass.de</a>.</p>
       </div>
     </div>
   </section>
+
+  <style>
+    .autoren-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-6);
+      margin: var(--space-8) 0;
+    }
+    .autor-card {
+      display: flex;
+      gap: var(--space-4);
+      padding: var(--space-6);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      background: var(--bg-elevated);
+    }
+    .autor-card[data-placeholder="true"] {
+      border-style: dashed;
+      opacity: .8;
+    }
+    .autor-avatar {
+      flex: 0 0 56px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-mono);
+      font-size: var(--text-base);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .autor-meta { flex: 1; min-width: 0; }
+    .autor-rolle {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 2px;
+    }
+    .autor-name {
+      font-family: var(--font-serif);
+      font-size: var(--text-xl);
+      line-height: 1.2;
+      margin: 0 0 4px;
+    }
+    .autor-schwerpunkt {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-3);
+    }
+    .autor-bio {
+      font-size: var(--text-sm);
+      line-height: 1.55;
+      color: var(--text-primary);
+      margin: 0;
+    }
+    .autor-qual {
+      font-size: var(--text-xs);
+      color: var(--text-tertiary);
+      margin-top: var(--space-3);
+    }
+  </style>
 </BaseLayout>

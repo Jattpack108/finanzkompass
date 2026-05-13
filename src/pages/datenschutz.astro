@@ -1,57 +1,205 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 export const prerender = true;
+
+// Synced with impressum.astro — same TODO markers
+const verantwortlicher = {
+  vorname: '[TODO_VORNAME]',
+  nachname: '[TODO_NACHNAME]',
+  strasse: '[TODO_STRASSE_HAUSNUMMER]',
+  plz: '[TODO_PLZ]',
+  ort: '[TODO_ORT]',
+  email: 'datenschutz@finanzkompass.de',
+};
+
+const isPlaceholder = (v: string) => v.startsWith('[TODO');
+const hasTodos =
+  isPlaceholder(verantwortlicher.vorname) ||
+  isPlaceholder(verantwortlicher.nachname) ||
+  isPlaceholder(verantwortlicher.strasse);
+
+const today = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' });
 ---
 <BaseLayout
   title="Datenschutzerklärung"
   description="Datenschutzerklärung von Finanzkompass nach DSGVO. Welche Daten wir verarbeiten, warum und wie lange."
-  noindex={false}
+  noindex={hasTodos}
 >
   <section class="article-hero">
     <div class="container">
       <div class="eyebrow">Rechtliches</div>
       <h1>Datenschutzerklärung</h1>
-      <p class="dek">Stand: {new Date().toLocaleDateString('de-DE')}</p>
+      <p class="dek">Stand: {today}</p>
     </div>
   </section>
+
+  {hasTodos && (
+    <section style="padding-block:var(--space-6);background:var(--accent-secondary-bg);border-block:1px solid var(--accent-secondary)">
+      <div class="container" style="max-width:780px">
+        <p style="margin:0;font-size:var(--text-sm);color:var(--accent-secondary);font-weight:500">
+          ⚠️ Diese Seite enthält noch Platzhalter (<code>[TODO_*]</code>) im Verantwortlichen-Block. Die Site ist noch nicht rechtsgültig veröffentlicht.
+        </p>
+      </div>
+    </section>
+  )}
 
   <section>
     <div class="container" style="max-width:780px">
       <div class="prose">
-        <h2>1. Verantwortlicher</h2>
+        <h2 id="verantwortlicher">1. Verantwortlicher</h2>
+        <p>Verantwortlich für die Datenverarbeitung auf dieser Website ist:</p>
         <p>
-          [Vorname Nachname]<br />
-          [Straße + Nr.]<br />
-          [PLZ Ort]<br />
-          E-Mail: <a href="mailto:datenschutz@finanzkompass.de">datenschutz@finanzkompass.de</a>
+          {verantwortlicher.vorname} {verantwortlicher.nachname}<br />
+          {verantwortlicher.strasse}<br />
+          {verantwortlicher.plz} {verantwortlicher.ort}<br />
+          Deutschland<br />
+          E-Mail: <a href={`mailto:${verantwortlicher.email}`}>{verantwortlicher.email}</a>
+        </p>
+        <p>
+          Wir haben keinen Datenschutzbeauftragten benannt, da die Voraussetzungen nach §38 BDSG nicht vorliegen.
         </p>
 
-        <h2>2. Hosting (Cloudflare)</h2>
-        <p>Diese Website wird bei Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, USA gehostet (Cloudflare Pages). Bei jedem Aufruf werden technisch notwendige Verbindungsdaten (IP-Adresse, Datum/Uhrzeit, aufgerufene Seite, User-Agent) verarbeitet. Diese Daten werden nicht dauerhaft mit deiner Person verknüpft gespeichert. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer funktionierenden Website).</p>
-        <p>Zwischen uns und Cloudflare besteht ein Auftragsverarbeitungsvertrag (AVV) und Cloudflare ist nach EU-Standardvertragsklauseln verpflichtet.</p>
+        <h2 id="hosting">2. Hosting (Cloudflare)</h2>
+        <p>
+          Diese Website wird bei <strong>Cloudflare, Inc.</strong>, 101 Townsend St, San Francisco, CA 94107, USA gehostet (Cloudflare Pages).
+          Bei jedem Aufruf werden technisch notwendige Verbindungsdaten verarbeitet: IP-Adresse, Datum/Uhrzeit, aufgerufene Seite, Referrer, User-Agent.
+          Diese Daten werden ausschließlich zur Auslieferung der Inhalte und zur Abwehr von Angriffen genutzt und nicht dauerhaft mit deiner Person verknüpft gespeichert.
+        </p>
+        <p>
+          <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer funktionierenden und sicheren Website).
+        </p>
+        <p>
+          Zwischen uns und Cloudflare besteht ein Auftragsverarbeitungsvertrag (AVV). Cloudflare hat sich nach EU-Standardvertragsklauseln (SCC, Art. 46 Abs. 2 lit. c DSGVO) zur Einhaltung des europäischen Datenschutzniveaus verpflichtet.
+        </p>
 
-        <h2>3. Cloudflare Web Analytics (cookie-frei)</h2>
-        <p>Wir nutzen Cloudflare Web Analytics zur anonymen Reichweitenmessung. Dabei werden <strong>keine Cookies</strong> gesetzt, keine IP-Adressen gespeichert und kein Tracking über Sitzungen hinaus durchgeführt. Erfasst werden ausschließlich aggregierte Daten (Seitenaufrufe, Verweildauer, Geräte-Kategorie). Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
+        <h2 id="webanalytics">3. Cloudflare Web Analytics (cookie-frei)</h2>
+        <p>
+          Wir nutzen <strong>Cloudflare Web Analytics</strong> zur anonymen Reichweitenmessung. Dabei werden <em>keine Cookies</em> gesetzt,
+          <em>keine IP-Adressen gespeichert</em>, kein Tracking über Sitzungen hinaus durchgeführt und keine Endgeräte-Identifier ausgewertet.
+          Erfasst werden ausschließlich aggregierte Daten: Seitenaufrufe, Verweildauer, Geräte-Kategorie, Browser-Typ.
+        </p>
+        <p>
+          Eine Re-Identifikation einzelner Besucher:innen ist mit Cloudflare Web Analytics technisch nicht möglich.
+          Da keine Personenbeziehbarkeit besteht, ist eine Einwilligung nach §25 TTDSG nicht erforderlich.
+        </p>
+        <p>
+          <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Auswertung des allgemeinen Nutzungsverhaltens).
+        </p>
 
-        <h2>4. Newsletter (Double-Opt-In)</h2>
-        <p>Du kannst unseren Newsletter abonnieren, indem du deine E-Mail-Adresse einträgst. Nach Eingabe erhältst du eine Bestätigungs-E-Mail mit einem Link. Erst nach Klick auf diesen Link bist du eingetragen (Double-Opt-In nach §7 Abs. 2 Nr. 3 UWG).</p>
-        <p>Gespeichert werden: deine E-Mail-Adresse, Zeitpunkt der Anmeldung, Zeitpunkt der Bestätigung, die Seite, auf der du dich angemeldet hast (zur Spam-Vermeidung).</p>
-        <p>Versanddienstleister ist Resend (Resend Labs, Inc., USA) — die Daten werden auf Basis eines AVV und der Standardvertragsklauseln übermittelt. Du kannst den Newsletter jederzeit über den Link in jeder E-Mail abbestellen. Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO (Einwilligung).</p>
+        <h2 id="newsletter">4. Newsletter (Double-Opt-In)</h2>
+        <p>
+          Du kannst unseren Newsletter abonnieren. Nach Eingabe deiner E-Mail-Adresse erhältst du eine Bestätigungs-E-Mail mit einem Link.
+          Erst nach Klick auf diesen Link bist du in unserer Abonnenten-Liste aktiviert (<strong>Double-Opt-In nach §7 Abs. 2 Nr. 3 UWG</strong>).
+        </p>
+        <p>
+          Gespeichert werden:
+        </p>
+        <ul>
+          <li>Deine E-Mail-Adresse</li>
+          <li>Zeitpunkt der Anmeldung</li>
+          <li>Zeitpunkt der Bestätigung</li>
+          <li>Die Seite, auf der du dich angemeldet hast (zur Spam-Vermeidung)</li>
+        </ul>
+        <p>
+          Versanddienstleister ist <strong>Resend, Inc.</strong> (Resend Labs, Inc., USA). Wir haben mit Resend einen Auftragsverarbeitungsvertrag
+          abgeschlossen. Resend hat sich nach EU-Standardvertragsklauseln zur Einhaltung des europäischen Datenschutzniveaus verpflichtet.
+        </p>
+        <p>
+          Du kannst den Newsletter jederzeit abbestellen — entweder über den Abmelde-Link in jeder E-Mail oder per Nachricht an
+          <a href={`mailto:${verantwortlicher.email}`}>{verantwortlicher.email}</a>. Nach Abmeldung wird deine E-Mail-Adresse aus dem
+          aktiven Versand entfernt; eine Kopie wird zur Vermeidung versehentlicher Re-Anmeldung in einer Sperrliste geführt.
+        </p>
+        <p>
+          <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. a DSGVO (Einwilligung).
+        </p>
 
-        <h2>5. Cashback-Antragsformular</h2>
-        <p>Bei einem Cashback-Antrag verarbeiten wir: deine E-Mail, das gewählte Produkt, deine Bestätigungs-/Order-ID, deine PayPal-Adresse oder Bankverbindung (für die Auszahlung). Diese Daten werden ausschließlich zur Abwicklung der Cashback-Auszahlung gespeichert und nach 36 Monaten (Aufbewahrungsfrist nach AO/HGB) gelöscht. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung).</p>
+        <h2 id="cashback">5. Cashback-Antragsformular</h2>
+        <p>
+          Bei einem Cashback-Antrag verarbeiten wir:
+        </p>
+        <ul>
+          <li>Deine E-Mail-Adresse</li>
+          <li>Das ausgewählte Produkt</li>
+          <li>Deine Bestätigungs-/Order-ID des Anbieters (zur Provisions-Zuordnung)</li>
+          <li>Deine PayPal-Adresse oder Bankverbindung (für die Auszahlung)</li>
+        </ul>
+        <p>
+          Diese Daten verarbeiten wir ausschließlich zur Abwicklung deines Cashback-Antrags. Wir speichern sie für die handels- und steuerrechtlich
+          vorgeschriebene Aufbewahrungsfrist (in der Regel 6 bzw. 10 Jahre nach Abgabenordnung und Handelsgesetzbuch) und löschen sie danach automatisch.
+        </p>
+        <p>
+          <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung) sowie Art. 6 Abs. 1 lit. c DSGVO (rechtliche Aufbewahrungspflicht).
+        </p>
 
-        <h2>6. Affiliate-Tracking</h2>
-        <p>Wenn du auf einen Affiliate-Link klickst, leitet dich ein interner Redirect (<code>/api/affiliate-redirect</code>) auf das Partner-Angebot weiter. Bei diesem Redirect protokollieren wir intern <em>anonym</em>: das Produkt, die Quelle-Seite, den Zeitpunkt, das Land (per Cloudflare-IP-Geolocation auf Länder-Ebene). <strong>Wir speichern keine IP-Adresse und keine Person-bezogenen Identifier</strong>. Auf der Zielseite gelten die Cookie- und Datenschutzbestimmungen des jeweiligen Partners. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
+        <h2 id="affiliate-tracking">6. Affiliate-Link-Tracking (anonymisiert)</h2>
+        <p>
+          Wenn du auf einen Affiliate-Link klickst, wirst du über einen internen Redirect (<code>/api/affiliate-redirect</code>) auf das Partner-Angebot weitergeleitet.
+          Bei diesem Redirect protokollieren wir intern <strong>anonym</strong>:
+        </p>
+        <ul>
+          <li>Den Produktnamen (z. B. "Trade Republic")</li>
+          <li>Die Quell-Seite (z. B. <code>/finanzen/trade-republic-test-2026</code>)</li>
+          <li>Zeitpunkt des Klicks</li>
+          <li>Das Land (per Cloudflare-IP-Geolocation auf Länder-Ebene, z. B. "DE")</li>
+          <li>Den User-Agent (zur Bot-Erkennung)</li>
+        </ul>
+        <p>
+          <strong>Wir speichern keine IP-Adresse und keine personenbeziehbaren Identifier.</strong> Die Daten dienen ausschließlich der internen Erfolgsmessung
+          (welche Tests führen zu Abschlüssen) und der Reduzierung von Bot-Traffic.
+        </p>
+        <p>
+          Auf der Zielseite des Affiliate-Partners gelten dessen eigene Datenschutzbestimmungen — Cookies, Tracking und Re-Targeting des Partners
+          unterliegen nicht unserer Kontrolle.
+        </p>
+        <p>
+          <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Erfolgsmessung).
+        </p>
 
-        <h2>7. Deine Rechte</h2>
-        <p>Du hast Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung (Art. 18), Datenübertragbarkeit (Art. 20) sowie Widerspruch (Art. 21) und Beschwerde bei der Aufsichtsbehörde (Art. 77). Anfragen an: <a href="mailto:datenschutz@finanzkompass.de">datenschutz@finanzkompass.de</a>.</p>
+        <h2 id="rechte">7. Deine Rechte als betroffene Person</h2>
+        <p>Du hast nach DSGVO folgende Rechte uns gegenüber:</p>
+        <ul>
+          <li><strong>Auskunft</strong> (Art. 15 DSGVO) — über alle zu deiner Person gespeicherten Daten</li>
+          <li><strong>Berichtigung</strong> (Art. 16) — bei unrichtigen Daten</li>
+          <li><strong>Löschung</strong> (Art. 17) — soweit keine gesetzlichen Aufbewahrungspflichten entgegenstehen</li>
+          <li><strong>Einschränkung der Verarbeitung</strong> (Art. 18)</li>
+          <li><strong>Datenübertragbarkeit</strong> (Art. 20) — Datenexport in strukturierter Form</li>
+          <li><strong>Widerspruch</strong> (Art. 21) — gegen Verarbeitung auf Basis berechtigten Interesses</li>
+          <li><strong>Widerruf einer Einwilligung</strong> (Art. 7 Abs. 3) — z. B. Newsletter-Abmeldung</li>
+          <li><strong>Beschwerde bei der Aufsichtsbehörde</strong> (Art. 77) — zuständig ist der Landesdatenschutzbeauftragte deines Bundeslandes</li>
+        </ul>
+        <p>
+          Anfragen richte bitte an <a href={`mailto:${verantwortlicher.email}`}>{verantwortlicher.email}</a>. Wir bestätigen den Erhalt binnen 48 Stunden
+          und antworten in der Sache binnen einer Woche.
+        </p>
 
-        <h2>8. Datenübermittlung in Drittländer</h2>
-        <p>Cloudflare und Resend sind US-Anbieter. Die Übermittlung erfolgt auf Basis der EU-Standardvertragsklauseln (Art. 46 Abs. 2 lit. c DSGVO) und ergänzender Maßnahmen.</p>
+        <h2 id="drittlandtransfer">8. Datenübermittlung in Drittländer</h2>
+        <p>
+          Cloudflare (USA) und Resend (USA) sind US-Anbieter. Die Übermittlung erfolgt auf Basis der EU-Standardvertragsklauseln (SCC, Art. 46 Abs. 2 lit. c DSGVO)
+          und ergänzender technischer und organisatorischer Maßnahmen. Beide Anbieter sind nach dem EU-U.S. Data Privacy Framework zertifiziert.
+        </p>
+        <p>
+          Trotz dieser Maßnahmen bleibt ein Restrisiko, dass US-Behörden auf Basis des US-amerikanischen Rechts (z. B. CLOUD Act) Zugriff auf
+          übermittelte Daten verlangen könnten. Dieses Risiko ist nach derzeitigem Stand der Rechtsprechung des EuGH (Schrems II) bekannt und akzeptiert.
+        </p>
 
-        <h2>9. Änderungen dieser Erklärung</h2>
-        <p>Wir behalten uns vor, diese Datenschutzerklärung anzupassen, wenn sich die rechtliche Lage oder die verarbeiteten Datenkategorien ändern. Die jeweils aktuelle Fassung ist auf dieser Seite abrufbar.</p>
+        <h2 id="speicherdauer">9. Speicherdauern im Überblick</h2>
+        <table>
+          <thead><tr><th>Datenkategorie</th><th>Speicherdauer</th></tr></thead>
+          <tbody>
+            <tr><td>Server-Logs Cloudflare</td><td>Maximal 30 Tage (Cloudflare-Konfiguration)</td></tr>
+            <tr><td>Anonyme Web-Analytics-Daten</td><td>Aggregiert, keine Personen-Beziehung</td></tr>
+            <tr><td>Newsletter-Abonnement</td><td>Bis Widerruf, danach Sperrliste</td></tr>
+            <tr><td>Cashback-Anträge</td><td>6 Jahre (Belegaufbewahrungspflicht §147 AO)</td></tr>
+            <tr><td>Affiliate-Klicks</td><td>Anonym, 24 Monate Aufbewahrung zur Erfolgsmessung</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="aenderungen">10. Änderungen dieser Erklärung</h2>
+        <p>
+          Wir behalten uns vor, diese Datenschutzerklärung anzupassen, wenn sich die rechtliche Lage oder die verarbeiteten Datenkategorien ändern.
+          Die jeweils aktuelle Fassung mit Datums-Angabe ist auf dieser Seite abrufbar. Bei wesentlichen Änderungen informieren wir Newsletter-Abonnent:innen
+          per E-Mail.
+        </p>
       </div>
     </div>
   </section>

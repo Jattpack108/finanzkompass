@@ -1,0 +1,201 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export const prerender = true;
+
+const tests = (await getCollection('tests', ({ data }) => !data.draft && data.saeule === 'finance'))
+  .sort((a, b) => +new Date(b.data.veroeffentlicht) - +new Date(a.data.veroeffentlicht));
+
+const vergleiche = (await getCollection('vergleiche', ({ data }) => !data.draft && (data.saeule === 'finance' || data.saeule === 'mixed')))
+  .sort((a, b) => +new Date(b.data.veroeffentlicht) - +new Date(a.data.veroeffentlicht));
+
+const ratgeber = (await getCollection('ratgeber', ({ data }) => !data.draft && (data.saeule === 'finance' || data.saeule === 'mixed')))
+  .sort((a, b) => +new Date(b.data.veroeffentlicht) - +new Date(a.data.veroeffentlicht));
+
+const kategorienMap: Record<string, string> = {
+  'neobroker': 'Neobroker',
+  'direktbank': 'Direktbank',
+  'banking-app': 'Banking-App',
+  'kreditkarte': 'Kreditkarte',
+  'tagesgeld': 'Tagesgeld',
+  'etf-sparplan': 'ETF-Sparplan',
+  'steuersoftware': 'Steuersoftware',
+  'altersvorsorge': 'Altersvorsorge',
+  'versicherung': 'Versicherung',
+  'crypto-hardware': 'Crypto-Hardware',
+  'investment-tool': 'Investment-Tool',
+};
+
+// Group tests by Kategorie
+const testsByKat = tests.reduce<Record<string, typeof tests>>((acc, t) => {
+  const k = t.data.kategorie;
+  (acc[k] ??= []).push(t);
+  return acc;
+}, {});
+const usedKategorien = Object.keys(testsByKat).sort();
+---
+<BaseLayout
+  title="Finanzen – Neobroker, ETFs, Banking, Steuersoftware"
+  description="Alle Finanzkompass-Tests aus dem Bereich Finanzen: Neobroker, ETF-Sparpläne, Banking-Apps, Steuersoftware und mehr. Getestet mit echtem Geld."
+>
+  <section class="article-hero">
+    <div class="container">
+      <div class="eyebrow">Ressort</div>
+      <h1>Finanzen.</h1>
+      <p class="dek">
+        Neobroker, ETF-Sparpläne, Banking-Apps, Steuersoftware. Wir testen mit echten Konten und echtem Geld, nicht mit Demo-Daten. Jeder Test mindestens 30 Tage Laufzeit.
+      </p>
+      <div class="article-meta">
+        <span><strong>{tests.length}</strong> Tests</span>
+        <span class="sep" aria-hidden="true"></span>
+        <span><strong>{vergleiche.length}</strong> Vergleiche</span>
+        <span class="sep" aria-hidden="true"></span>
+        <span><strong>{ratgeber.length}</strong> Ratgeber</span>
+      </div>
+    </div>
+  </section>
+
+  {tests.length > 0 && (
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-eyebrow"><span class="idx">01</span> · Tests</div>
+            <h2 class="section-title">Aktuelle Produkt-Tests</h2>
+          </div>
+          <div class="section-action">
+            <a href="/methodik">So testen wir <span class="mono">→</span></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="container" style="padding-inline:0">
+        <div class="cards-3">
+          {tests.map((t, i) => (
+            <article class="card" style="position:relative">
+              <div class="card-cat">
+                <span class="card-num">{String(i + 1).padStart(3, '0')}</span>
+                Finanzen · {kategorienMap[t.data.kategorie] ?? t.data.kategorie}
+              </div>
+              <h3 class="card-title">
+                <a href={`/finanzen/${t.id.replace(/\.md$/, '')}`}>{t.data.titel}</a>
+              </h3>
+              <p class="card-excerpt">{t.data.beschreibung}</p>
+              <div class="card-foot">
+                <div class="left">
+                  <span>Die Redaktion</span>
+                  <span class="sep" aria-hidden="true"></span>
+                  <span>{t.data.testdauerTage ? `${t.data.testdauerTage} Tage Test` : 'Test'}</span>
+                </div>
+                <span class="card-logo" aria-hidden="true">{t.data.produktAnbieter.slice(0,2).toUpperCase()}</span>
+              </div>
+              {t.data.cashbackVerfuegbar && t.data.cashbackBetrag && (
+                <span class="card-cashback" style="position:absolute;top:var(--space-6);right:var(--space-8)">
+                  {t.data.cashbackBetrag}&thinsp;€ Cashback
+                </span>
+              )}
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {usedKategorien.length > 0 && (
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-eyebrow"><span class="idx">02</span> · Nach Kategorie</div>
+            <h2 class="section-title">Durchstöbern</h2>
+          </div>
+        </div>
+        <div class="cat-grid" style="margin-top:var(--space-8)">
+          {usedKategorien.map((k) => (
+            <a class="cat-card cat-finanzen" href={`/kategorie/${k}`}>
+              <div class="cat-accent" aria-hidden="true"></div>
+              <div class="cat-head">
+                <span class="cat-num">{testsByKat[k].length}</span>
+                <span class="cat-count">{testsByKat[k].length === 1 ? 'Test' : 'Tests'}</span>
+              </div>
+              <h3 class="cat-title">{kategorienMap[k] ?? k}</h3>
+              <p class="cat-desc">{testsByKat[k][0].data.beschreibung.slice(0, 110)}…</p>
+              <div class="cat-foot">
+                <span>Alle ansehen</span>
+                <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {vergleiche.length > 0 && (
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-eyebrow"><span class="idx">03</span> · Vergleiche</div>
+            <h2 class="section-title">Direkte Produkt-Duelle</h2>
+          </div>
+          <div class="section-action">
+            <a href="/vergleiche">Alle Vergleiche <span class="mono">→</span></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="container" style="padding-inline:0">
+        <div class="cards-3">
+          {vergleiche.slice(0, 3).map((v) => (
+            <article class="card">
+              <div class="card-cat">Vergleich · {v.data.saeule === 'mixed' ? 'Übergreifend' : 'Finanzen'}</div>
+              <h3 class="card-title">
+                <a href={`/vergleiche/${v.id.replace(/\.md$/, '')}`}>{v.data.titel}</a>
+              </h3>
+              <p class="card-excerpt">{v.data.beschreibung}</p>
+              <div class="card-foot">
+                <div class="left">
+                  <span>Die Redaktion</span>
+                  <span class="sep" aria-hidden="true"></span>
+                  <span>{v.data.produkte.length} Produkte</span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {ratgeber.length > 0 && (
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-eyebrow"><span class="idx">04</span> · Ratgeber</div>
+            <h2 class="section-title">Grundlagen verstehen</h2>
+          </div>
+          <div class="section-action">
+            <a href="/ratgeber">Alle Ratgeber <span class="mono">→</span></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="container" style="padding-inline:0">
+        <div class="cards-3">
+          {ratgeber.slice(0, 3).map((r) => (
+            <article class="card">
+              <div class="card-cat">Ratgeber · {r.data.kategorie}</div>
+              <h3 class="card-title">
+                <a href={`/ratgeber/${r.id.replace(/\.md$/, '')}`}>{r.data.titel}</a>
+              </h3>
+              <p class="card-excerpt">{r.data.beschreibung}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>

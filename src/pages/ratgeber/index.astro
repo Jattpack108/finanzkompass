@@ -1,0 +1,166 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { breadcrumbSchema, formatGermanDate } from '../../lib/seo';
+
+export const prerender = true;
+
+const ratgeber = (await getCollection('ratgeber', ({ data }) => !data.draft))
+  .sort((a, b) => +new Date(b.data.veroeffentlicht) - +new Date(a.data.veroeffentlicht));
+
+const finanze = ratgeber.filter((r) => r.data.saeule === 'finance');
+const wellbeing = ratgeber.filter((r) => r.data.saeule === 'wellbeing');
+const mixed = ratgeber.filter((r) => r.data.saeule === 'mixed');
+
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://finanzkompass.de';
+const breadcrumb = breadcrumbSchema([
+  { name: 'Startseite', url: siteUrl },
+  { name: 'Ratgeber', url: `${siteUrl}/ratgeber` },
+]);
+
+const pillars = ratgeber.filter((r) => r.data.isPillarPage);
+---
+<BaseLayout
+  title="Ratgeber – Finanzen & Wellbeing verstehen"
+  description="Finanzkompass-Ratgeber: Grundlagen zu ETFs, Neobrokern, Steuer, Online-Therapie und mentaler Gesundheit. Kein Marketing-Sprech, sondern erklärt wie für eine kluge Freundin."
+  jsonLd={breadcrumb}
+>
+  <section class="article-hero">
+    <div class="container">
+      <div class="eyebrow">Ressort</div>
+      <h1>Ratgeber.</h1>
+      <p class="dek">
+        Grundlagen, die du brauchst, bevor du Produkt-Tests liest. Was ist die BaFin? Wie funktioniert ein ETF-Sparplan? Wann lohnt sich Online-Therapie? Wir erklären es, wie wir es einer klugen Freundin erklären würden — ohne Marketing-Sprech.
+      </p>
+      <div class="article-meta">
+        <span><strong>{ratgeber.length}</strong> {ratgeber.length === 1 ? 'Ratgeber' : 'Ratgeber'} insgesamt</span>
+        {ratgeber[0] && (<>
+          <span class="sep" aria-hidden="true"></span>
+          <span>Aktualisiert: {formatGermanDate(ratgeber[0].data.aktualisiert)}</span>
+        </>)}
+      </div>
+    </div>
+  </section>
+
+  {pillars.length > 0 && (
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-eyebrow"><span class="idx">01</span> · Themenseiten</div>
+            <h2 class="section-title">Wenn du nur eines lesen willst</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="container" style="padding-inline:0">
+        <div class="cards-3">
+          {pillars.map((r) => (
+            <article class="card">
+              <div class="card-cat" style={r.data.saeule === 'wellbeing' ? 'color:var(--accent-wellbeing)' : ''}>
+                Themenseite · {r.data.saeule === 'finance' ? 'Finanzen' : r.data.saeule === 'wellbeing' ? 'Wellbeing' : 'Übergreifend'}
+              </div>
+              <h3 class="card-title">
+                <a href={`/ratgeber/${r.id.replace(/\.md$/, '')}`}>{r.data.titel}</a>
+              </h3>
+              <p class="card-excerpt">{r.data.beschreibung}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {finanze.length > 0 && (
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-eyebrow"><span class="idx">02</span> · Finanzen</div>
+            <h2 class="section-title">Finanz-Ratgeber</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="container" style="padding-inline:0">
+        <div class="cards-3">
+          {finanze.map((r) => (
+            <article class="card">
+              <div class="card-cat">Ratgeber · {r.data.kategorie}</div>
+              <h3 class="card-title">
+                <a href={`/ratgeber/${r.id.replace(/\.md$/, '')}`}>{r.data.titel}</a>
+              </h3>
+              <p class="card-excerpt">{r.data.beschreibung}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {wellbeing.length > 0 && (
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-eyebrow"><span class="idx">03</span> · Wellbeing</div>
+            <h2 class="section-title">Wellbeing-Ratgeber</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="container" style="padding-inline:0">
+        <div class="cards-3">
+          {wellbeing.map((r) => (
+            <article class="card">
+              <div class="card-cat" style="color:var(--accent-wellbeing)">Ratgeber · {r.data.kategorie}</div>
+              <h3 class="card-title">
+                <a href={`/ratgeber/${r.id.replace(/\.md$/, '')}`}>{r.data.titel}</a>
+              </h3>
+              <p class="card-excerpt">{r.data.beschreibung}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {mixed.length > 0 && (
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-eyebrow"><span class="idx">04</span> · Übergreifend</div>
+            <h2 class="section-title">Themenübergreifend</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="container" style="padding-inline:0">
+        <div class="cards-3">
+          {mixed.map((r) => (
+            <article class="card">
+              <div class="card-cat">Ratgeber · {r.data.kategorie}</div>
+              <h3 class="card-title">
+                <a href={`/ratgeber/${r.id.replace(/\.md$/, '')}`}>{r.data.titel}</a>
+              </h3>
+              <p class="card-excerpt">{r.data.beschreibung}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {ratgeber.length === 0 && (
+    <section>
+      <div class="container" style="max-width:780px">
+        <div class="prose">
+          <h2>Ratgeber kommen demnächst.</h2>
+          <p>Wir bauen unsere Ratgeber-Sektion gerade auf. Geplant für die ersten Wochen: ETF-Sparplan-Grundlagen, Neobroker-Roundup 2026, Online-Therapie in Deutschland, Cashback richtig versteuern.</p>
+          <p><a class="btn btn-primary" href="/#newsletter">Newsletter abonnieren</a> und nichts verpassen.</p>
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>

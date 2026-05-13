@@ -1,10 +1,77 @@
+# Finanzkompass — robots.txt
+# Wir indizieren freundlich. Aber Affiliate-Redirects und Confirmation-Pages bleiben außen vor.
+
 User-agent: *
 Allow: /
-
-# Crawlers should never follow these — they are cloaked outbound redirects
-Disallow: /api/affiliate-redirect
-
-# Confirmation landing should not be indexed
+Disallow: /api/
 Disallow: /newsletter-bestaetigt
+Crawl-delay: 1
+
+# AI-Trainings-Crawler: wir gestatten kein Scraping unserer redaktionellen Inhalte
+# für das Training kommerzieller Foundation Models. Wir freuen uns über Verweise,
+# aber nicht über kommerzielles Re-Use ohne Lizenz.
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: OAI-SearchBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+User-agent: Omgilibot
+Disallow: /
+
+User-agent: ImagesiftBot
+Disallow: /
+
+User-agent: Meta-ExternalAgent
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+# Klassische Suchmaschinen-Crawler dürfen unverändert
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
 
 Sitemap: https://finanzkompass.de/sitemap-index.xml
