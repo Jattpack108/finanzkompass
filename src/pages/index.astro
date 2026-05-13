@@ -152,7 +152,7 @@ const issue = `Ausgabe Nr. 001 · Woche vom ${new Date().toLocaleDateString('de-
               <span class="card-num">{String(i + 1).padStart(3, '0')}</span>
               {t.data.saeule === 'wellbeing' ? 'Wellbeing' : 'Finanzen'} · {t.data.kategorie}
             </div>
-            <h3 class="card-title"><a href={`/${t.data.saeule === 'wellbeing' ? 'wellbeing' : 'finanzen'}/${t.slug}`}>{t.data.titel}</a></h3>
+            <h3 class="card-title"><a href={`/${t.data.saeule === 'wellbeing' ? 'wellbeing' : 'finanzen'}/${t.id.replace(/\.md$/, '')}`}>{t.data.titel}</a></h3>
             <p class="card-excerpt">{t.data.beschreibung}</p>
             <div class="card-foot">
               <div class="left"><span>Die Redaktion</span><span class="sep" aria-hidden="true"></span><span>Test</span></div>
