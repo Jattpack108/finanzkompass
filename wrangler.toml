@@ -1,4 +1,5 @@
 name = "finanzkompass"
+account_id = "07109c77b3f0ebd3199f666b920c961a"
 compatibility_date = "2026-05-01"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "./dist"
@@ -6,7 +7,7 @@ pages_build_output_dir = "./dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "finanzkompass-db"
-database_id = "PLACEHOLDER_D1_DATABASE_ID"
+database_id = "34b23557-3dfc-4066-80bd-287987a1403b"
 migrations_dir = "migrations"
 
 [vars]
