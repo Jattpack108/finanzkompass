@@ -67,10 +67,40 @@ console.log(`✓ Worker bundled  → dist/_worker.js`);
 cpSync(resolve(distDir, 'client'), distDir, { recursive: true });
 console.log(`✓ Static assets   → dist/ (hoisted from dist/client/)`);
 
-// ── 3. Clean up ─────────────────────────────────────────────────────────────
+// ── 3. Create _routes.json ──────────────────────────────────────────────────
+// Without this, Cloudflare Pages routes EVERYTHING (including /_astro/ JS/CSS)
+// through the Worker, which is inefficient.  Exclude static asset paths so
+// Pages serves them directly from the CDN edge.
+import { writeFileSync } from 'fs';
+writeFileSync(
+  resolve(distDir, '_routes.json'),
+  JSON.stringify({
+    version: 1,
+    // Route all requests through the Worker by default…
+    include: ['/*'],
+    // …except pure static assets that never need server logic.
+    exclude: [
+      '/_astro/*',        // CSS, JS bundles (hashed filenames)
+      '/favicon.ico',
+      '/favicon.svg',
+      '/robots.txt',
+      '/sitemap*.xml',
+    ],
+  }, null, 2),
+);
+console.log(`✓ dist/_routes.json created (static assets bypass Worker)`);
+
+// ── 4. Clean up ─────────────────────────────────────────────────────────────
 rmSync(resolve(distDir, 'server'), { recursive: true, force: true });
 rmSync(resolve(distDir, 'client'), { recursive: true, force: true });
 console.log(`✓ dist/server/ and dist/client/ removed`);
+
+// Wrangler caches the last deploy config path in .wrangler/deploy/config.json.
+// After the build, dist/server/wrangler.json no longer exists, so the cache
+// would cause the next `wrangler pages deploy` to fail.  Delete it.
+const deployCache = resolve(__dirname, '..', '.wrangler', 'deploy', 'config.json');
+rmSync(deployCache, { force: true });
+console.log(`✓ .wrangler/deploy/config.json cleared (stale deploy cache)`);
 
 console.log(`
 Deploy with:
