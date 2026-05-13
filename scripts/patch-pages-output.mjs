@@ -97,6 +97,21 @@ rmSync(resolve(distDir, 'server'), { recursive: true, force: true });
 rmSync(resolve(distDir, 'client'), { recursive: true, force: true });
 console.log(`✓ dist/server/ and dist/client/ removed`);
 
+// ── 5. Pagefind static search index ────────────────────────────────────────
+// Crawls all HTML in dist/, generates dist/pagefind/* (client-side search,
+// no server, no tracking, DSGVO-OK). /suche.astro loads it via the UI script.
+import { spawnSync } from 'child_process';
+const pf = spawnSync(
+  process.platform === 'win32' ? 'npx.cmd' : 'npx',
+  ['pagefind', '--site', distDir, '--silent'],
+  { stdio: 'inherit', shell: process.platform === 'win32' }
+);
+if (pf.status === 0) {
+  console.log(`✓ Pagefind search index → dist/pagefind/`);
+} else {
+  console.warn(`⚠ Pagefind indexing failed (exit ${pf.status}) — search will be empty`);
+}
+
 // Wrangler caches the last deploy config path in .wrangler/deploy/config.json.
 // After the build, dist/server/wrangler.json no longer exists, so the cache
 // would cause the next `wrangler pages deploy` to fail.  Delete it.

@@ -83,3 +83,12 @@ Drei Punkte, die nicht zur Topwertung passen:
 - Aktive Trader → [Scalable Capital PRIME+](/vergleiche/trade-republic-vs-scalable-2026)
 - Fonds-Fans → flatex oder comdirect
 - Daten-orientierte Trader → Interactive Brokers
+
+## Grundlagen vertiefen
+
+Wenn du gerade erst mit Geldanlage startest, lies vor dem Depot-Eröffnen unsere Pillar-Artikel:
+
+- [ETF-Sparplan-Grundlagen 2026](/ratgeber/etf-sparplan-grundlagen) — was ein ETF ist, wie Cost-Averaging funktioniert, welche Fehler dich am meisten kosten
+- [Neobroker im Vergleich 2026](/ratgeber/neobroker-im-vergleich-2026) — Marktüberblick, Kostenrechner, welcher Anbieter zu welchem Anlegertyp passt
+- [BaFin & Einlagensicherung](/ratgeber/bafin-und-einlagensicherung) — wie weit dein Geld geschützt ist und was Sondervermögen bedeutet
+- [Cashback richtig versteuern](/ratgeber/cashback-richtig-versteuern) — Freigrenze nach §22 EStG, Beispielrechnungen

@@ -1,104 +1,124 @@
 # Finanzkompass
 
-Editorial affiliate review site for the DACH market. Astro 6.x on Cloudflare Pages with D1.
+Editorial affiliate review site for the DACH market.
+**Live:** https://finanzkompass.pages.dev · **Repo:** https://github.com/Jattpack108/finanzkompass
+
+Astro 6.3 SSR on Cloudflare Pages, D1 for persistence, Tailwind 4 + custom design system, Pagefind for static client-side search, cookie-free analytics.
 
 ## Quick start
 
 ```bash
 npm install
-npm run dev
+npm run dev          # Astro dev server with Cloudflare workerd
+npm run build        # Production build → dist/_worker.js + static assets
+npm run deploy       # build + wrangler pages deploy
 ```
 
 Visit http://localhost:4321.
 
 ## Stack
 
-- Astro 6.x (`output: 'server'`)
-- Tailwind CSS 4 via `@tailwindcss/vite`
-- Cloudflare Pages + D1 (SQLite)
-- Resend for transactional email
-- TypeScript strict
-
-## Local development
-
-```bash
-npm run dev                     # Astro dev server with Cloudflare workerd
-npm run build                   # Production build (writes to dist/)
-npx astro check                 # Type-check
-npx wrangler types              # Regenerate Cloudflare bindings types
-```
-
-## D1 schema
-
-Migrations live under `migrations/`. Apply to local D1:
-
-```bash
-npx wrangler d1 migrations apply finanzkompass-db --local
-```
-
-Apply to production (after `wrangler login`):
-
-```bash
-npx wrangler d1 migrations apply finanzkompass-db --remote
-```
-
-Tables: `abonnenten`, `cashback_antraege`, `affiliate_klicks`, `affiliate_programme`.
-
-## Deploy to Cloudflare Pages
-
-Connect this repo at https://dash.cloudflare.com -> Workers & Pages -> Create application -> Pages -> Connect to Git.
-
-Build settings:
-- Build command: `npm run build`
-- Build output: `dist`
-- Environment variables: see `.env.example` (set in Pages -> Settings -> Environment Variables)
-- D1 binding: bind D1 database `finanzkompass-db` as `DB` in Pages -> Settings -> Functions -> D1 database bindings
-
-## Environment variables
-
-| Name | Required | Description |
-|---|---|---|
-| `RESEND_API_KEY` | yes | Resend API key (https://resend.com -> API Keys) |
-| `PUBLIC_SITE_URL` | yes | Canonical site URL, no trailing slash |
-| `NEWSLETTER_FROM_EMAIL` | yes | Verified Resend sender |
-| `NEWSLETTER_FROM_NAME` | yes | Display name |
-| `CASHBACK_RECIPIENT_EMAIL` | yes | Inbox for cashback notifications |
+- **Astro 6.3** (`output: 'server'`) with `@astrojs/cloudflare` v13
+- **Tailwind CSS 4** via `@tailwindcss/vite`
+- **Cloudflare Pages** + **D1** (SQLite) + **KV** (sessions)
+- **Resend** for transactional email
+- **Pagefind** for client-side static search
+- **TypeScript strict**
 
 ## Project layout
 
 ```
 src/
-|-- content.config.ts         Astro 5+ content collections schema
-|-- content/                  Markdown source articles
-|-- layouts/                  Page shells (Base, Test, Vergleich, Ratgeber)
-|-- components/               UI components (16)
-|-- lib/                      D1 client, SEO helpers, affiliate logic, email
-|-- pages/                    Routes + API endpoints
-`-- styles/global.css         Design system (from claude.design HTML)
+├── content.config.ts         Astro content collections schema (tests, vergleiche, ratgeber)
+├── content/                  Markdown source articles
+│   ├── tests/                Product tests (Trade Republic, BetterHelp …)
+│   ├── vergleiche/           Direct comparisons
+│   └── ratgeber/             6 pillar guides + future how-tos
+├── layouts/                  Page shells (Base, Test, Vergleich, Ratgeber)
+├── components/               UI components — VerdictBox, ProsConsTable, …
+├── lib/                      D1 client, SEO helpers, affiliate, email
+├── pages/                    Routes + API endpoints
+│   ├── api/                  Newsletter, cashback, affiliate-redirect (SSR)
+│   ├── finanzen/             Listing + dynamic test routes
+│   ├── wellbeing/            Listing + dynamic test routes
+│   ├── vergleiche/           Listing + dynamic comparison routes
+│   ├── ratgeber/             Listing + dynamic guide routes
+│   ├── kategorie/[cat].astro Per-category aggregation
+│   ├── 404.astro             Static 404 (Pages-Convention)
+│   └── suche.astro           Pagefind UI
+└── styles/global.css         Design system (1034 lines, light/dark mode)
+
+scripts/
+├── patch-pages-output.mjs    Post-build: bundles Worker, hoists assets,
+│                              generates _routes.json + Pagefind index
+├── generate-og-image.mjs     One-time: SVG → og-default.png via sharp
+└── generate-favicons.mjs     One-time: SVG → 4 favicon PNG sizes
 ```
 
-## What still needs to be done manually before launch
+## Build pipeline
 
-See `../plans/2026-05-13-launch-runbook.md` for the full step-by-step. Short version:
+`npm run build` does:
 
-1. Register `finanzkompass.de` at Cloudflare Registrar (or choose alternative).
-2. Create Cloudflare account; copy Account ID into `wrangler.toml`.
-3. `npx wrangler login`, then `npx wrangler d1 create finanzkompass-db --remote` and copy real `database_id` into `wrangler.toml`.
-4. Apply migrations to remote: `npx wrangler d1 migrations apply finanzkompass-db --remote`.
-5. Create Resend account, verify domain, create API key, set as `RESEND_API_KEY` env var in Pages.
-6. Fill all `[Vorname Nachname]` / `[Strasse]` / `[+49 ...]` placeholders in `src/pages/impressum.astro` and `src/pages/datenschutz.astro`.
-7. Apply for affiliate programs: financeAds, Tarifcheck, CHECK24, BetterHelp (via Impact), Trade Republic direct, Scalable direct, WISO Steuer direct.
-8. Replace `https://refnonexistent.example/*` URLs in `src/content/**` and `src/lib/affiliate.ts` with real affiliate URLs.
-9. Once deployed, enable Cloudflare Web Analytics and paste the token into the commented line in `BaseLayout.astro`.
-10. Verify the property in Google Search Console + Bing Webmaster Tools.
+1. `astro build` → emits `dist/server/` (Worker) + `dist/client/` (static)
+2. `scripts/patch-pages-output.mjs`:
+   - esbuild bundle `dist/server/entry.mjs` → `dist/_worker.js`
+   - copy `dist/client/*` → `dist/` root
+   - delete `dist/server/` (would expose server code as static)
+   - delete `dist/client/` (already hoisted)
+   - write `dist/_routes.json` (only `/api/*` + `/newsletter-bestaetigt` go to Worker)
+   - run Pagefind on `dist/` → `dist/pagefind/`
+   - clear stale `.wrangler/deploy/config.json`
+
+Result: a clean Pages "Advanced Mode" `_worker.js` deployment that bypasses the Cloudflare adapter's GitHub-integration-only output format.
+
+## D1 schema
+
+Migrations under `migrations/`. Tables: `abonnenten`, `cashback_antraege`, `affiliate_klicks`, `affiliate_programme`.
+
+```bash
+npx wrangler d1 migrations apply finanzkompass-db --local    # dev
+npx wrangler d1 migrations apply finanzkompass-db --remote   # prod
+```
+
+## Environment variables
+
+Set in Cloudflare Pages → Settings → Environment Variables (Production):
+
+| Name | Required | Description |
+|---|---|---|
+| `RESEND_API_KEY` | yes | Resend API key |
+| `NEWSLETTER_FROM_EMAIL` | yes | Verified Resend sender |
+| `NEWSLETTER_FROM_NAME` | yes | Display name on outbound mail |
+| `CASHBACK_RECIPIENT_EMAIL` | yes | Inbox for cashback notifications |
+| `PUBLIC_SITE_URL` | yes | Set in `wrangler.toml [vars]` (no trailing slash) |
+
+D1 binding `DB` and KV binding `SESSION` are configured in `wrangler.toml` and picked up automatically by `wrangler pages deploy`.
 
 ## Editorial standards
 
-- Every YMYL article must include `Risikohinweis` (auto by `TestLayout`/`VergleichLayout`/`RatgeberLayout` based on `saeule`)
-- Author box and source list at the bottom of each article (auto by layouts)
-- `aktualisiert` date in frontmatter is rendered prominently — must be kept current
-- All affiliate links must use `<AffiliateLink>` — never raw anchors
+- Every YMYL article auto-includes `Risikohinweis` (investment / therapie variants based on `saeule`)
+- Author box + source list at article foot (auto by layouts)
+- `aktualisiert` date in frontmatter is rendered prominently — must be kept current on every update
+- All affiliate links must use `<AffiliateLink>` component — never raw anchors
+- Corrections logged at `/korrekturen` with date, before/after, scope
+
+## Routing
+
+`_routes.json` (generated by `patch-pages-output.mjs`) sends only these paths to the Worker:
+
+- `/api/*` — newsletter, cashback, affiliate-redirect, newsletter-bestaetigen
+- `/newsletter-bestaetigt` — confirmation landing (reads `?status=` query)
+
+Everything else is served as static asset directly from the CDN edge. Unmatched routes return the static `dist/404.html` with HTTP 404 (Pages convention).
+
+## Pages still being completed
+
+See [`NEXT_STEPS.md`](./NEXT_STEPS.md) for the full manual-action list (Impressum data, Resend setup, affiliate program signups, custom domain).
+
+## Changelog
+
+See [`CHANGELOG.md`](./CHANGELOG.md).
 
 ## License
 
-Proprietary. (c) 2026 Finanzkompass.
+Proprietary. © 2026 Finanzkompass.

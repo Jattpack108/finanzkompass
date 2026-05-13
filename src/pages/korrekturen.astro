@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { breadcrumbSchema } from '../lib/seo';
+
+export const prerender = true;
+
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://finanzkompass.de';
+const breadcrumb = breadcrumbSchema([
+  { name: 'Startseite', url: siteUrl },
+  { name: 'Korrekturen', url: `${siteUrl}/korrekturen` },
+]);
+
+// Korrektur-Log. Neuere zuerst.
+// Jede Korrektur enthält: Datum, betroffener Artikel, was war falsch, was haben wir geändert, Stand.
+const korrekturen: Array<{
+  datum: string;
+  artikel: string;
+  artikelUrl?: string;
+  was: string;
+  korrektur: string;
+  stand: string;
+}> = [
+  // Noch keine Korrekturen, da Site frisch live.
+  // Beispiel-Eintrag (auskommentiert):
+  // {
+  //   datum: '2026-05-20',
+  //   artikel: 'Trade Republic Test 2026',
+  //   artikelUrl: '/finanzen/trade-republic-test-2026',
+  //   was: 'Preisangabe „1 € pro Order" galt nicht für Krypto-Trades.',
+  //   korrektur: 'Hinweis ergänzt: Krypto-Trades kosten 1 € + variable Spread.',
+  //   stand: 'Sofort korrigiert, Artikel-Datum auf 2026-05-20 aktualisiert.',
+  // },
+];
+---
+<BaseLayout
+  title="Korrekturen – Was wir geändert haben"
+  description="Öffentliches Korrektur-Log. Wenn wir einen Fehler machen, dokumentieren wir ihn hier — datiert, mit dem ursprünglichen Stand und der Korrektur."
+  jsonLd={breadcrumb}
+>
+  <section class="article-hero">
+    <div class="container" style="max-width:780px">
+      <div class="eyebrow">Transparenz</div>
+      <h1>Korrekturen.</h1>
+      <p class="dek">
+        Wenn wir einen Fehler machen, korrigieren wir ihn sofort und dokumentieren ihn hier. Datiert, mit dem ursprünglichen Stand und unserer Änderung. Wir verstecken keine Fehlerstände.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container" style="max-width:780px">
+      <div class="prose">
+        <h2>Unsere Korrekturpolitik</h2>
+        <ol>
+          <li>
+            <strong>Sofort korrigieren.</strong> Sobald wir auf einen Fehler aufmerksam werden — durch Leser:innen, eigene Recherche oder Anbieter-Hinweise — passen wir den Artikel binnen 48 Stunden an.
+          </li>
+          <li>
+            <strong>Datieren.</strong> Jede Korrektur erscheint hier mit Datum, betroffenem Artikel und konkret was geändert wurde.
+          </li>
+          <li>
+            <strong>Update-Datum aktualisieren.</strong> Jeder korrigierte Artikel bekommt ein neues <code>aktualisiert</code>-Datum, das prominent oben im Artikel angezeigt wird.
+          </li>
+          <li>
+            <strong>Versionsverlauf öffentlich.</strong> Größere strukturelle Änderungen landen zusätzlich im <a href="https://github.com/Jattpack108/finanzkompass/blob/main/CHANGELOG.md" rel="noopener">Changelog</a>.
+          </li>
+          <li>
+            <strong>Bei substantiellen Änderungen Newsletter-Hinweis.</strong> Wenn sich eine Empfehlung ändert (z. B. ein Produkt fällt von 8.0 auf 6.5), informieren wir Newsletter-Abonnent:innen.
+          </li>
+        </ol>
+
+        <h2>Was zählt als Korrektur?</h2>
+        <p>Wir unterscheiden zwischen drei Stufen:</p>
+        <ul>
+          <li><strong>Korrektur</strong> — Fehlerhafte Tatsache wurde berichtigt. Wird hier dokumentiert.</li>
+          <li><strong>Update</strong> — Neue Information ergänzt (z. B. Anbieter ändert Preise). Im Artikel mit Update-Datum, nicht hier gelistet.</li>
+          <li><strong>Stilistisch</strong> — Schreibfehler, kleinere Umformulierungen. Werden nicht dokumentiert.</li>
+        </ul>
+
+        <h2>Korrektur-Hinweise melden</h2>
+        <p>Hast du einen Fehler gefunden? <a href="mailto:korrektur@finanzkompass.de">korrektur@finanzkompass.de</a> — wir antworten innerhalb von 48 Stunden, oft schneller.</p>
+        <p>Bei datenschutzrelevanten Hinweisen: <a href="mailto:datenschutz@finanzkompass.de">datenschutz@finanzkompass.de</a>.</p>
+      </div>
+
+      <hr style="margin:var(--space-12) 0;border:0;border-top:1px solid var(--border-subtle)" />
+
+      <h2 style="font-family:var(--font-serif);font-size:var(--text-2xl);margin-bottom:var(--space-6)">Korrektur-Log</h2>
+
+      {korrekturen.length === 0 ? (
+        <div style="padding:var(--space-8);background:var(--bg-secondary);border-radius:var(--radius-md);border:1px solid var(--border-subtle)">
+          <p style="margin:0;color:var(--text-secondary);font-size:var(--text-sm)">
+            Noch keine Korrekturen — die Site ist neu live. Sobald wir den ersten Fehler korrigieren (und das werden wir), erscheint er hier mit allen Details.
+          </p>
+        </div>
+      ) : (
+        <ol style="list-style:none;padding:0;margin:0">
+          {korrekturen.map((k) => (
+            <li style="padding:var(--space-6) 0;border-bottom:1px solid var(--border-subtle)">
+              <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:var(--space-2)">
+                {new Date(k.datum).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}
+              </div>
+              <h3 style="font-family:var(--font-serif);font-size:var(--text-lg);font-weight:500;margin-bottom:var(--space-3)">
+                {k.artikelUrl ? <a href={k.artikelUrl}>{k.artikel}</a> : k.artikel}
+              </h3>
+              <dl style="margin:0;display:grid;grid-template-columns:max-content 1fr;gap:var(--space-2) var(--space-4);font-size:var(--text-sm)">
+                <dt style="color:var(--text-tertiary);font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase">Was war falsch</dt>
+                <dd style="margin:0">{k.was}</dd>
+                <dt style="color:var(--text-tertiary);font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase">Korrektur</dt>
+                <dd style="margin:0">{k.korrektur}</dd>
+                <dt style="color:var(--text-tertiary);font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase">Stand</dt>
+                <dd style="margin:0">{k.stand}</dd>
+              </dl>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  </section>
+</BaseLayout>

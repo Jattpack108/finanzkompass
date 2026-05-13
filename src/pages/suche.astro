@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+export const prerender = true;
+---
+<BaseLayout
+  title="Suche"
+  description="Durchsuche alle Finanzkompass-Tests, Vergleiche und Ratgeber. Komplett client-seitig, keine Tracking-Pixel, keine Server-Anfragen."
+  noindex={true}
+>
+  <section class="article-hero">
+    <div class="container" style="max-width:780px">
+      <div class="eyebrow">Suche</div>
+      <h1>Finde, was du brauchst.</h1>
+      <p class="dek">
+        Volltextsuche über alle Tests, Vergleiche und Ratgeber. Komplett im Browser, ohne Server-Anfragen, ohne Tracking.
+      </p>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="container" style="max-width:780px">
+      <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+      <div id="search" class="search-shell"></div>
+      <noscript>
+        <p style="margin-top:var(--space-8);padding:var(--space-6);background:var(--bg-secondary);border-radius:var(--radius-md);font-size:var(--text-sm)">
+          Diese Suche braucht JavaScript. Wenn du es deaktiviert hast, hier sind die wichtigsten Anlaufpunkte:
+        </p>
+        <ul style="margin-top:var(--space-4);font-size:var(--text-sm)">
+          <li><a href="/finanzen">Alle Finanz-Tests</a></li>
+          <li><a href="/wellbeing">Alle Wellbeing-Tests</a></li>
+          <li><a href="/vergleiche">Alle Vergleiche</a></li>
+          <li><a href="/ratgeber">Alle Ratgeber</a></li>
+        </ul>
+      </noscript>
+    </div>
+  </section>
+
+  <script is:inline type="module">
+    // Pagefind UI is loaded lazily — only when this page is opened.
+    // The bundle (~30KB gz) lives at /pagefind/pagefind-ui.js, generated at build time.
+    try {
+      const { PagefindUI } = await import('/pagefind/pagefind-ui.js');
+      new PagefindUI({
+        element: '#search',
+        showSubResults: true,
+        showImages: false,
+        translations: {
+          placeholder: 'Suche nach Trade Republic, ETF, BetterHelp…',
+          clear_search: 'Suche löschen',
+          load_more: 'Weitere Ergebnisse laden',
+          search_label: 'Finanzkompass durchsuchen',
+          filters_label: 'Filter',
+          zero_results: 'Keine Treffer für "[SEARCH_TERM]"',
+          many_results: '[COUNT] Treffer für "[SEARCH_TERM]"',
+          one_result: 'Ein Treffer für "[SEARCH_TERM]"',
+          alt_search: 'Keine Treffer für "[SEARCH_TERM]". Stattdessen Ergebnisse für "[DIFFERENT_TERM]":',
+          search_suggestion: 'Keine Treffer für "[SEARCH_TERM]". Versuche eine andere Suche:',
+          searching: 'Suche nach "[SEARCH_TERM]"…',
+        },
+      });
+    } catch (err) {
+      console.warn('Pagefind UI failed to load', err);
+      const el = document.getElementById('search');
+      if (el) el.innerHTML = '<p style="color:var(--danger)">Die Suche konnte nicht geladen werden. Bitte später erneut versuchen.</p>';
+    }
+  </script>
+
+  <style is:global>
+    /* Pagefind UI customisation — match our design tokens */
+    :root {
+      --pagefind-ui-scale: 1;
+      --pagefind-ui-primary: var(--text-primary);
+      --pagefind-ui-text: var(--text-primary);
+      --pagefind-ui-background: var(--bg-primary);
+      --pagefind-ui-border: var(--border-default);
+      --pagefind-ui-tag: var(--bg-secondary);
+      --pagefind-ui-border-width: 1px;
+      --pagefind-ui-border-radius: 8px;
+      --pagefind-ui-image-border-radius: 8px;
+      --pagefind-ui-image-box-ratio: 3 / 2;
+      --pagefind-ui-font: var(--font-sans);
+    }
+    .search-shell { margin-top: var(--space-6); }
+    .pagefind-ui__search-input {
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+    }
+    .pagefind-ui__result-title { font-family: var(--font-serif); }
+  </style>
+</BaseLayout>

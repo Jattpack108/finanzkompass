@@ -1,0 +1,279 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { breadcrumbSchema } from '../lib/seo';
+
+export const prerender = true;
+
+// Finanz- und Wellbeing-Glossar — Begriffe, die in unseren Tests
+// und Ratgebern auftauchen, hier mit kompakten, präzisen Definitionen.
+const glossar = [
+  {
+    begriff: 'Abgeltungsteuer',
+    saeule: 'finance',
+    definition: 'Pauschale Steuer auf Kapitalerträge in Deutschland (25 % + 5,5 % Solidaritätszuschlag + ggf. Kirchensteuer). Wird von der Bank automatisch einbehalten, sofern kein Freistellungsauftrag bis zur Höhe des Sparerpauschbetrags vorliegt.',
+    siehe: ['Sparerpauschbetrag', 'Freistellungsauftrag'],
+  },
+  {
+    begriff: 'Affiliate-Provision',
+    saeule: 'mixed',
+    definition: 'Vergütung, die ein Anbieter an einen Vermittler zahlt, wenn dieser einen Kunden zum Abschluss vermittelt. Im DACH-Finance-Bereich typischerweise 30-60 € pro Depot-Eröffnung. Für den Kunden entstehen dadurch keine Mehrkosten.',
+    siehe: ['Cashback', 'Cookie-Tage'],
+  },
+  {
+    begriff: 'Approbation',
+    saeule: 'wellbeing',
+    definition: 'Staatliche Zulassung zur eigenverantwortlichen Ausübung der Heilkunde. Voraussetzung für die Tätigkeit als Psychotherapeut:in mit Kassensitz. Erfordert in der Regel ein abgeschlossenes Hochschulstudium plus 5-jährige Therapie-Ausbildung.',
+    siehe: ['Richtlinienverfahren', 'Heilpraktiker für Psychotherapie'],
+  },
+  {
+    begriff: 'BaFin',
+    saeule: 'finance',
+    definition: 'Bundesanstalt für Finanzdienstleistungsaufsicht. Reguliert in Deutschland Banken, Versicherungen, Wertpapierhandelsinstitute und Investmentfonds. Erlaubnis-Status jedes Anbieters in der öffentlichen BaFin-Unternehmensdatenbank prüfbar.',
+    siehe: ['Wertpapierhandelsbank', 'Einlagensicherung'],
+  },
+  {
+    begriff: 'Cashback',
+    saeule: 'mixed',
+    definition: 'Geldrückerstattung an den Kunden, in unserem Modell ein Teil der erhaltenen Affiliate-Provision. Steuerlich oft als „sonstige Einkünfte" nach §22 Nr. 3 EStG mit einer Freigrenze von 256 €/Jahr.',
+    siehe: ['Affiliate-Provision', 'Sonstige Einkünfte §22 EStG'],
+  },
+  {
+    begriff: 'CBT (Kognitive Verhaltenstherapie)',
+    saeule: 'wellbeing',
+    definition: 'Strukturiertes, evidenzbasiertes Therapieverfahren, das auf der Veränderung problematischer Denk- und Verhaltensmuster basiert. In Deutschland eines der vier anerkannten Richtlinienverfahren.',
+    siehe: ['Richtlinienverfahren', 'DiGA'],
+  },
+  {
+    begriff: 'Cookie-Tage',
+    saeule: 'finance',
+    definition: 'Zeitspanne in Tagen, in der ein Affiliate-Cookie nach Klick auf den Werbelink gültig ist. Schließt der Kunde innerhalb dieser Frist ab, wird die Provision dem Vermittler zugeordnet. Branchenüblich: 30-90 Tage.',
+    siehe: ['Affiliate-Provision'],
+  },
+  {
+    begriff: 'DiGA',
+    saeule: 'wellbeing',
+    definition: 'Digitale Gesundheitsanwendung. Apps, die vom Bundesinstitut für Arzneimittel und Medizinprodukte (BfArM) als Medizinprodukt zertifiziert wurden und auf Rezept verschrieben werden können. Vollständig von der gesetzlichen Krankenkasse erstattet. Verzeichnis: diga.bfarm.de.',
+    siehe: ['CBT (Kognitive Verhaltenstherapie)'],
+  },
+  {
+    begriff: 'Einlagensicherung',
+    saeule: 'finance',
+    definition: 'Gesetzlicher Schutz von Bareinlagen bei Banken bis 100.000 € pro Person und Institut. Wird im Insolvenzfall einer Bank über die Entschädigungseinrichtung (EdB/EdÖ) ausgezahlt. Gilt nicht für Wertpapiere – diese sind separat als Sondervermögen geschützt.',
+    siehe: ['Sondervermögen', 'BaFin'],
+  },
+  {
+    begriff: 'ETF (Exchange Traded Fund)',
+    saeule: 'finance',
+    definition: 'Börsengehandelter Investmentfonds, der einen Index nachbildet. Günstig (TER meist 0,07–0,30 %), diversifiziert und als Sondervermögen geschützt. Beliebtester Baustein für privates langfristiges Anlegen.',
+    siehe: ['Sparplan', 'TER', 'Sondervermögen'],
+  },
+  {
+    begriff: 'FTSE All-World',
+    saeule: 'finance',
+    definition: 'Weltweiter Aktienindex von FTSE Russell. Bildet rund 4.500 Unternehmen aus Industrie- und Schwellenländern ab. Beliebte Basis für ein „Ein-Produkt-Portfolio" via ETF.',
+    siehe: ['ETF (Exchange Traded Fund)', 'MSCI World'],
+  },
+  {
+    begriff: 'Freistellungsauftrag',
+    saeule: 'finance',
+    definition: 'Anweisung an die Bank, Kapitalerträge bis zur Höhe des Sparerpauschbetrags (1.000 € pro Person und Jahr) steuerfrei zu lassen. Wird in der App des Brokers in der Regel in 60 Sekunden eingerichtet.',
+    siehe: ['Sparerpauschbetrag', 'Abgeltungsteuer'],
+  },
+  {
+    begriff: 'Heilpraktiker für Psychotherapie',
+    saeule: 'wellbeing',
+    definition: 'Person mit eingeschränkter Heilkundeerlaubnis nach Heilpraktikergesetz, speziell auf psychotherapeutische Tätigkeit beschränkt. Keine vollwertige Approbation, sehr unterschiedliche Qualifikation. Keine Kassenleistung.',
+    siehe: ['Approbation', 'Richtlinienverfahren'],
+  },
+  {
+    begriff: 'LS Exchange',
+    saeule: 'finance',
+    definition: 'Privater Handelsplatz von Lang & Schwarz mit deutlich längeren Handelszeiten (7:30–23:00 Uhr) als Xetra. Marktstandard für Neobroker wie Trade Republic.',
+    siehe: ['Xetra', 'Spread'],
+  },
+  {
+    begriff: 'MSCI World',
+    saeule: 'finance',
+    definition: 'Aktienindex von MSCI mit rund 1.500 Unternehmen aus 23 Industrieländern. Marktkapitalisierungs-gewichtet, ohne Schwellenländer. Beliebtester ETF-Index für deutsche Anleger:innen.',
+    siehe: ['ETF (Exchange Traded Fund)', 'FTSE All-World'],
+  },
+  {
+    begriff: 'Neobroker',
+    saeule: 'finance',
+    definition: 'Wertpapierhandelsinstitut mit reduziertem Funktionsumfang (nur Depot, kein Girokonto), Smartphone-Fokus und schlanker Kostenstruktur (0–1 € pro Order). Marktführer in DACH: Trade Republic, Scalable Capital.',
+    siehe: ['Wertpapierhandelsbank', 'PFOF'],
+  },
+  {
+    begriff: 'PFOF (Payment for Order Flow)',
+    saeule: 'finance',
+    definition: 'Vergütung, die ein Handelsplatz an einen Broker zahlt, um Order-Volumen zugeleitet zu bekommen. Trägt indirekt zu etwas weiteren Spreads bei. In der EU ab 2026 schrittweise verboten.',
+    siehe: ['Spread', 'Neobroker'],
+  },
+  {
+    begriff: 'Richtlinienverfahren',
+    saeule: 'wellbeing',
+    definition: 'Die vier vom Gemeinsamen Bundesausschuss (G-BA) wissenschaftlich anerkannten und kassenfinanzierten Psychotherapie-Verfahren: kognitive Verhaltenstherapie, tiefenpsychologisch fundierte Psychotherapie, analytische Psychotherapie, systemische Therapie.',
+    siehe: ['Approbation', 'CBT (Kognitive Verhaltenstherapie)'],
+  },
+  {
+    begriff: 'Sondervermögen',
+    saeule: 'finance',
+    definition: 'Rechtsstatus von Investmentfonds- und ETF-Anteilen sowie depotgehaltenen Wertpapieren: Sie sind getrennt vom Vermögen der verwaltenden Bank und gehören rechtlich den Anleger:innen. Im Insolvenzfall der Bank werden sie auf einen anderen Verwalter übertragen.',
+    siehe: ['ETF (Exchange Traded Fund)', 'Einlagensicherung'],
+  },
+  {
+    begriff: 'Sonstige Einkünfte §22 EStG',
+    saeule: 'finance',
+    definition: 'Einkommensteuer-Kategorie für gelegentliche Einkünfte, die keiner anderen Einkunftsart zuzurechnen sind. Freigrenze 256 € pro Person und Jahr (nicht Freibetrag — bei Überschreiten ist der gesamte Betrag steuerpflichtig). Relevant für Affiliate-Cashback.',
+    siehe: ['Cashback', 'Sparerpauschbetrag'],
+  },
+  {
+    begriff: 'Sparerpauschbetrag',
+    saeule: 'finance',
+    definition: 'Steuerlicher Freibetrag für Kapitalerträge: 1.000 € pro Person und Jahr (Stand 2026), 2.000 € bei zusammenveranlagten Ehepartnern. Kapitalerträge unterhalb dieser Grenze bleiben steuerfrei, wenn Freistellungsauftrag erteilt ist.',
+    siehe: ['Freistellungsauftrag', 'Abgeltungsteuer'],
+  },
+  {
+    begriff: 'Sparplan',
+    saeule: 'finance',
+    definition: 'Automatisierter Dauerauftrag, der zu einem festgelegten Zeitpunkt einen festen Betrag in einen ETF oder Aktie investiert. Häufig kostenlos bei Neobrokern. Profitiert vom Cost-Averaging-Effekt.',
+    siehe: ['ETF (Exchange Traded Fund)', 'Neobroker'],
+  },
+  {
+    begriff: 'Spread',
+    saeule: 'finance',
+    definition: 'Differenz zwischen Kauf- und Verkaufskurs eines Wertpapiers. Versteckte Kostenkomponente neben der expliziten Order-Gebühr. Bei großen ETFs in deutschen Hauptzeiten oft unter 0,05 %, bei exotischen Papieren auch über 1 %.',
+    siehe: ['Xetra', 'LS Exchange'],
+  },
+  {
+    begriff: 'Teilfreistellung',
+    saeule: 'finance',
+    definition: 'Steuerliche Erleichterung für Aktien-ETFs: 30 % der Erträge sind steuerfrei, wenn der Fonds mindestens 51 % Aktien hält. Gilt zusätzlich zum Sparerpauschbetrag. Geregelt in §20 InvStG.',
+    siehe: ['ETF (Exchange Traded Fund)', 'Abgeltungsteuer'],
+  },
+  {
+    begriff: 'TER (Total Expense Ratio)',
+    saeule: 'finance',
+    definition: 'Gesamtkostenquote eines Fonds in Prozent pro Jahr. Schließt Verwaltungsgebühren ein, aber nicht Transaktionskosten oder Spreads. Für breite Welt-ETFs marktüblich 0,15-0,25 % p. a.',
+    siehe: ['ETF (Exchange Traded Fund)'],
+  },
+  {
+    begriff: 'Terminservicestelle',
+    saeule: 'wellbeing',
+    definition: 'Service der Kassenärztlichen Vereinigungen unter 116 117. Vermittelt binnen 4 Wochen einen Termin in der psychotherapeutischen Sprechstunde. Rechtsanspruch nach Psychotherapie-Richtlinie.',
+    siehe: ['Richtlinienverfahren', 'Approbation'],
+  },
+  {
+    begriff: 'Vorabpauschale',
+    saeule: 'finance',
+    definition: 'Jährliche fiktive Mindestbesteuerung thesaurierender ETFs auch ohne Verkauf. Berechnung: Basiszins der Bundesbank × 70 % × Fondswert. Bei niedrigen Zinsen nahe null.',
+    siehe: ['Abgeltungsteuer', 'ETF (Exchange Traded Fund)'],
+  },
+  {
+    begriff: 'Wertpapierhandelsbank',
+    saeule: 'finance',
+    definition: 'Spezialform der Bank mit BaFin-Erlaubnis für Wertpapierhandel und -verwahrung, ohne klassisches Bankgeschäft (kein Kreditgeschäft, kein eigenes Einlagengeschäft). Status der meisten DACH-Neobroker.',
+    siehe: ['BaFin', 'Neobroker'],
+  },
+  {
+    begriff: 'Xetra',
+    saeule: 'finance',
+    definition: 'Elektronischer Handelsplatz der Deutschen Börse, der größte Aktien-Marktplatz in DE. Höchste Liquidität (engste Spreads) für deutsche Aktien und ETFs während der Handelszeit (09:00-17:30).',
+    siehe: ['LS Exchange', 'Spread'],
+  },
+];
+
+// Group by first letter
+const grouped = glossar
+  .sort((a, b) => a.begriff.localeCompare(b.begriff, 'de'))
+  .reduce<Record<string, typeof glossar>>((acc, item) => {
+    const letter = item.begriff[0].toUpperCase();
+    (acc[letter] ??= []).push(item);
+    return acc;
+  }, {});
+
+const letters = Object.keys(grouped).sort();
+
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://finanzkompass.de';
+const breadcrumb = breadcrumbSchema([
+  { name: 'Startseite', url: siteUrl },
+  { name: 'Glossar', url: `${siteUrl}/glossar` },
+]);
+
+// DefinedTerm Schema.org structured data
+const definedTermSet = {
+  '@context': 'https://schema.org',
+  '@type': 'DefinedTermSet',
+  name: 'Finanzkompass Glossar',
+  hasDefinedTerm: glossar.map((g) => ({
+    '@type': 'DefinedTerm',
+    name: g.begriff,
+    description: g.definition,
+  })),
+};
+---
+<BaseLayout
+  title="Glossar – Finanz- und Wellbeing-Begriffe erklärt"
+  description="Alle Fachbegriffe aus unseren Tests und Ratgebern auf einen Blick: ETF, TER, BaFin, DiGA, Approbation, Cashback und mehr. Klar definiert, ohne Marketing-Sprech."
+  jsonLd={[breadcrumb, definedTermSet]}
+>
+  <section class="article-hero">
+    <div class="container" style="max-width:780px">
+      <div class="eyebrow">Glossar</div>
+      <h1>Begriffe, ohne Marketing-Sprech.</h1>
+      <p class="dek">
+        Alle Fachbegriffe aus unseren Tests und Ratgebern, klar definiert. Mit Querverweisen zwischen verwandten Konzepten.
+      </p>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="container" style="max-width:780px">
+      <nav aria-label="Buchstaben-Index" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:var(--space-8);padding-bottom:var(--space-6);border-bottom:1px solid var(--border-subtle)">
+        {letters.map((l) => (
+          <a href={`#letter-${l}`} style="font-family:var(--font-mono);font-size:var(--text-sm);padding:6px 10px;border:1px solid var(--border-default);border-radius:var(--radius-sm);color:var(--text-secondary);text-decoration:none">
+            {l}
+          </a>
+        ))}
+      </nav>
+
+      {letters.map((l) => (
+        <section style="margin-bottom:var(--space-12)">
+          <h2 id={`letter-${l}`} style="font-family:var(--font-mono);font-size:var(--text-base);color:var(--text-tertiary);letter-spacing:.1em;text-transform:uppercase;margin-bottom:var(--space-6);padding-bottom:var(--space-2);border-bottom:1px solid var(--border-subtle)">{l}</h2>
+          <dl>
+            {grouped[l].map((item) => (
+              <article id={item.begriff.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')} style="margin-bottom:var(--space-8)">
+                <dt style="font-family:var(--font-serif);font-size:var(--text-xl);font-weight:500;margin-bottom:var(--space-2)">
+                  {item.begriff}
+                  <span style={`font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin-left:10px;color:${item.saeule === 'wellbeing' ? 'var(--accent-wellbeing)' : item.saeule === 'finance' ? 'var(--accent-primary)' : 'var(--text-tertiary)'};vertical-align:middle`}>
+                    {item.saeule === 'finance' ? 'Finanzen' : item.saeule === 'wellbeing' ? 'Wellbeing' : 'Übergreifend'}
+                  </span>
+                </dt>
+                <dd style="margin:0;font-size:var(--text-base);line-height:var(--lh-base);color:var(--text-primary)">
+                  {item.definition}
+                  {item.siehe && item.siehe.length > 0 && (
+                    <p style="margin-top:var(--space-3);font-size:var(--text-sm);color:var(--text-tertiary)">
+                      <strong style="font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-tertiary)">Siehe auch:</strong>{' '}
+                      {item.siehe.map((s, idx) => (
+                        <>
+                          <a href={`#${s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`}>{s}</a>
+                          {idx < item.siehe!.length - 1 ? ', ' : ''}
+                        </>
+                      ))}
+                    </p>
+                  )}
+                </dd>
+              </article>
+            ))}
+          </dl>
+        </section>
+      ))}
+
+      <hr style="margin:var(--space-12) 0;border:0;border-top:1px solid var(--border-subtle)" />
+      <p style="color:var(--text-tertiary);font-size:var(--text-sm)">
+        Fehlt ein Begriff? Schreib uns: <a href="mailto:kontakt@finanzkompass.de">kontakt@finanzkompass.de</a>.
+        Alle Definitionen sind Stand {new Date().toLocaleDateString('de-DE')} und werden mit unseren Tests aktualisiert.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

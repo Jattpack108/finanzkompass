@@ -82,3 +82,11 @@ Der Tarif lag im Testzeitraum bei ~$240/Monat mit einer Live-Session pro Woche p
 - **MindDoc** — Online-Therapieverzeichnis mit deutschen Approbationstherapeuten
 - **HelloBetter** — DiGA-zertifizierte Programme (kassenerstattungsfähig)
 - **Klassische Praxis** — über die Terminservicestelle 116 117 suchen
+
+## Hintergrund-Lektüre
+
+Bevor du dich für eine Plattform entscheidest, hilft unser Marktüberblick:
+
+- [Online-Therapie in Deutschland — der komplette Leitfaden](/ratgeber/online-therapie-deutschland-leitfaden) — alle drei Versorgungswege (Approbations-Therapie, DiGA, Privatplattform) gegenübergestellt
+- [Kassenfinanzierte Psychotherapie vs. Online-Angebote](/ratgeber/kassentherapie-vs-online-angebote) — was Krankenkassen zahlen, wie das Kostenerstattungsverfahren funktioniert
+- [Glossar — Approbation, DiGA, Richtlinienverfahren](/glossar) — alle Fachbegriffe

@@ -4,7 +4,7 @@ import Risikohinweis from '../components/Risikohinweis.astro';
 import AutorenBox from '../components/AutorenBox.astro';
 import QuellenListe from '../components/QuellenListe.astro';
 import Inhaltsverzeichnis from '../components/Inhaltsverzeichnis.astro';
-import { breadcrumbSchema, formatGermanDate } from '../lib/seo';
+import { breadcrumbSchema, formatGermanDate, articleSchema } from '../lib/seo';
 import type { CollectionEntry } from 'astro:content';
 
 export interface Props {
@@ -26,11 +26,21 @@ const breadcrumb = breadcrumbSchema([
   { name: 'Ratgeber', url: `${siteUrl}/ratgeber` },
   { name: d.titel, url: articleUrl },
 ]);
+
+const article = articleSchema({
+  title: d.titel,
+  description: d.beschreibung,
+  url: articleUrl,
+  datePublished: d.veroeffentlicht.toISOString(),
+  dateModified: d.aktualisiert.toISOString(),
+  siteUrl,
+  kategorie: d.kategorie,
+});
 ---
 <BaseLayout
   title={d.titel}
   description={d.beschreibung}
-  jsonLd={breadcrumb}
+  jsonLd={[breadcrumb, article]}
 >
   <article>
     <header class="article-hero">

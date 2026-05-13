@@ -68,3 +68,11 @@ Beide bieten Jahressteuerbescheinigungen. Scalable schneidet im WISO-Steuer-Impo
 ## Wie wir getestet haben
 
 18 Monate Parallelbetrieb. Beide Konten mit gleichen Beträgen, gleichen ETFs (MSCI World, FTSE All-World, Stoxx Europe 600). Drei manuelle Einzelorder pro Monat in beiden Konten. Sämtliche Gebühren, Spreads und Kursdifferenzen wurden tabellarisch erfasst. Alle Kosten wurden vom eigenen Geld der Redaktion getragen.
+
+## Vertiefende Lektüre
+
+- [Einzeltest Trade Republic 2026](/finanzen/trade-republic-test-2026)
+- [Neobroker im Vergleich 2026](/ratgeber/neobroker-im-vergleich-2026) — alle relevanten DACH-Anbieter im Marktüberblick
+- [ETF-Sparplan-Grundlagen](/ratgeber/etf-sparplan-grundlagen) — was vor dem Depot-Eröffnen klar sein sollte
+- [BaFin & Einlagensicherung](/ratgeber/bafin-und-einlagensicherung) — wie sicher dein Geld bei Neobrokern ist
+- [Glossar — Spread, Xetra, LS Exchange, TER](/glossar)
