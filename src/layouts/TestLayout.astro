@@ -21,6 +21,8 @@ const d = entry.data;
 const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://finanzkompass.de';
 const path = Astro.url.pathname;
 const articleUrl = new URL(path, siteUrl).toString();
+const slug = entry.id.replace(/\.md$/, '');
+const ogImage = `${siteUrl}/og/tests/${slug}.png`;
 
 const risikoVariant: 'investment' | 'therapie' | undefined =
   d.saeule === 'finance' ? 'investment' :
@@ -47,6 +49,7 @@ const review = reviewSchema({
 <BaseLayout
   title={d.titel}
   description={d.beschreibung}
+  ogImage={ogImage}
   jsonLd={[review, breadcrumb]}
 >
   <article>

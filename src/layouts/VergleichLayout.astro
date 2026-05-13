@@ -18,6 +18,8 @@ const d = entry.data;
 
 const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://finanzkompass.de';
 const articleUrl = new URL(Astro.url.pathname, siteUrl).toString();
+const slug = entry.id.replace(/\.md$/, '');
+const ogImage = `${siteUrl}/og/vergleiche/${slug}.png`;
 
 const showRisiko = d.saeule === 'finance' || d.saeule === 'mixed';
 
@@ -30,6 +32,7 @@ const breadcrumb = breadcrumbSchema([
 <BaseLayout
   title={d.titel}
   description={d.beschreibung}
+  ogImage={ogImage}
   jsonLd={breadcrumb}
 >
   <article>

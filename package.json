@@ -7,10 +7,13 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && node scripts/patch-pages-output.mjs",
+    "build": "node scripts/generate-article-og-images.mjs && astro build && node scripts/patch-pages-output.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "generate-types": "wrangler types",
+    "og:articles": "node scripts/generate-article-og-images.mjs",
+    "og:default": "node scripts/generate-og-image.mjs",
+    "og:favicons": "node scripts/generate-favicons.mjs",
     "deploy": "npm run build && wrangler pages deploy dist --project-name finanzkompass --branch main"
   },
   "dependencies": {

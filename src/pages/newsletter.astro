@@ -1,0 +1,114 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NewsletterFormular from '../components/NewsletterFormular.astro';
+import { breadcrumbSchema } from '../lib/seo';
+
+export const prerender = true;
+
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://finanzkompass.de';
+const breadcrumb = breadcrumbSchema([
+  { name: 'Startseite', url: siteUrl },
+  { name: 'Newsletter', url: `${siteUrl}/newsletter` },
+]);
+
+// Newsletter-Archiv (manuell gepflegt nach jedem Versand).
+// Sobald die erste Ausgabe verschickt wurde, wird hier ein Eintrag ergänzt:
+// {
+//   ausgabe: '001',
+//   datum: '2026-06-03',
+//   titel: 'Was wir diese Woche getestet haben',
+//   themen: ['Trade Republic Update', 'BetterHelp Datenschutz', '...'],
+//   url: '/newsletter/001-2026-06-03'  // optional, falls als Web-Version verfügbar
+// },
+const ausgaben: Array<{
+  ausgabe: string;
+  datum: string;
+  titel: string;
+  themen: string[];
+  url?: string;
+}> = [];
+---
+<BaseLayout
+  title="Newsletter – Eine E-Mail pro Woche"
+  description="Wöchentliche E-Mail mit den Tests der Woche, offenen Fragen und Cashback-Updates. Kein Sponsored Content, kein algorithmischer Füller, Double-Opt-In."
+  jsonLd={breadcrumb}
+>
+  <section class="article-hero">
+    <div class="container" style="max-width:780px">
+      <div class="eyebrow">Newsletter</div>
+      <h1>Eine E-Mail pro Woche. Die Tools, die es wert sind.</h1>
+      <p class="dek">
+        Wöchentlich. Kein Sponsored Content. Kein Tracking-Pixel. Kein algorithmischer Füller — die Tests der Woche, offene Fragen, Cashback-Updates. Jederzeit abbestellbar mit einem Klick.
+      </p>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="container" style="max-width:780px">
+      <NewsletterFormular variant="inline" />
+
+      <div class="prose" style="margin-top:var(--space-12)">
+        <h2>Was kommt in der E-Mail?</h2>
+        <ul>
+          <li><strong>Tests der Woche</strong> — Tests, die wir neu veröffentlicht oder aktualisiert haben</li>
+          <li><strong>Offene Fragen</strong> — Themen, an denen wir gerade testen, mit Möglichkeit zur Beteiligung</li>
+          <li><strong>Cashback-Updates</strong> — neue Cashback-Programme, geänderte Konditionen, ausgezahlte Beträge</li>
+          <li><strong>Editor's Pick</strong> — eine kuratierte externe Empfehlung (Buch, Podcast, Artikel)</li>
+        </ul>
+
+        <h2>Was wir <em>nicht</em> machen</h2>
+        <ul>
+          <li>Wir verkaufen keine E-Mail-Adressen</li>
+          <li>Wir nutzen keine Tracking-Pixel in den E-Mails</li>
+          <li>Wir teilen keine Daten mit Anbietern, deren Produkte wir testen</li>
+          <li>Wir senden keine bezahlten Werbe-Sendungen</li>
+        </ul>
+        <p>Details: <a href="/datenschutz">Datenschutzerklärung</a>.</p>
+
+        <h2>Wie abmelden?</h2>
+        <p>Ein Klick auf den Abmelde-Link in jeder E-Mail. Wir entfernen deine Adresse sofort aus dem Versand-Verteiler. Wenn du nur eine Pause brauchst: einfach den Link nutzen und später erneut anmelden.</p>
+
+        <h2>Häufige Fragen</h2>
+        <p><strong>Wann kommt die E-Mail?</strong> Jeden Donnerstag-Vormittag.</p>
+        <p><strong>Wie viele Abonnent:innen hat der Newsletter?</strong> Zahl publizieren wir nicht, weil sie kein Qualitätsmerkmal ist. Wir konzentrieren uns auf Inhalt statt Reichweite.</p>
+        <p><strong>Kann ich Themen vorschlagen?</strong> Ja. <a href="mailto:kontakt@finanzkompass.de">kontakt@finanzkompass.de</a>.</p>
+      </div>
+
+      <hr style="margin:var(--space-12) 0;border:0;border-top:1px solid var(--border-subtle)" />
+
+      <h2 style="font-family:var(--font-serif);font-size:var(--text-2xl);margin-bottom:var(--space-6)">Archiv</h2>
+
+      {ausgaben.length === 0 ? (
+        <div style="padding:var(--space-8);background:var(--bg-secondary);border-radius:var(--radius-md);border:1px solid var(--border-subtle)">
+          <p style="margin:0;color:var(--text-secondary);font-size:var(--text-sm)">
+            Die erste Ausgabe wird verschickt, sobald genug Inhalt für ein wöchentliches Format vorhanden ist. Solange die Site noch im Aufbau ist, behalten wir uns vor, mit dem regelmäßigen Versand zu warten — Qualität vor Frequenz.
+          </p>
+          <p style="margin:var(--space-3) 0 0;color:var(--text-secondary);font-size:var(--text-sm)">
+            Du kannst dich aber schon anmelden — du erhältst eine Bestätigungs-Mail, und sobald die erste Ausgabe kommt, bekommst du sie automatisch.
+          </p>
+        </div>
+      ) : (
+        <ol style="list-style:none;padding:0;margin:0">
+          {ausgaben.map((a) => (
+            <li style="padding:var(--space-6) 0;border-bottom:1px solid var(--border-subtle)">
+              <div style="display:flex;align-items:baseline;gap:var(--space-3);margin-bottom:var(--space-2)">
+                <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-tertiary)">
+                  Ausgabe {a.ausgabe}
+                </span>
+                <span style="color:var(--text-tertiary);font-size:var(--text-sm)">
+                  · {new Date(a.datum).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}
+                </span>
+              </div>
+              <h3 style="font-family:var(--font-serif);font-size:var(--text-lg);font-weight:500;margin-bottom:var(--space-3)">
+                {a.url ? <a href={a.url}>{a.titel}</a> : a.titel}
+              </h3>
+              <ul style="margin:0;font-size:var(--text-sm);color:var(--text-secondary)">
+                {a.themen.map((t) => <li>{t}</li>)}
+              </ul>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  </section>
+</BaseLayout>

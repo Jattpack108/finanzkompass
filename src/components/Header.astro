@@ -20,11 +20,16 @@ const nav = [
       <span class="brand-tag">Finanzen &amp; Wellbeing</span>
     </a>
     <nav class="nav" aria-label="Hauptnavigation">
-      {nav.map((item) => (
-        <a href={item.href} class={isActive(item.prefix) ? 'is-active' : ''}>{item.label}</a>
-      ))}
+      {nav.map((item) => {
+        const active = isActive(item.prefix);
+        return (
+          <a href={item.href} class={active ? 'is-active' : ''} aria-current={active ? 'page' : undefined}>
+            {item.label}
+          </a>
+        );
+      })}
       <span class="nav-sep" aria-hidden="true"></span>
-      <a href="/cashback" class={isActive('/cashback') ? 'is-active' : ''}>Cashback</a>
+      <a href="/cashback" class={isActive('/cashback') ? 'is-active' : ''} aria-current={isActive('/cashback') ? 'page' : undefined}>Cashback</a>
     </nav>
 
     <div style="display:flex;gap:8px;align-items:center">

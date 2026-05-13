@@ -2,21 +2,69 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import NewsletterFormular from '../components/NewsletterFormular.astro';
 import { getCollection } from 'astro:content';
+import { formatGermanDate } from '../lib/seo';
 
 export const prerender = true;
 
-// Pull up to 3 most recent tests for the "Latest" grid.
-let tests: any[] = [];
-try {
-  const all = await getCollection('tests', ({ data }) => !data.draft);
-  tests = all
-    .sort((a, b) => +new Date(b.data.veroeffentlicht) - +new Date(a.data.veroeffentlicht))
-    .slice(0, 3);
-} catch (e) {
-  tests = [];
-}
+// Live-Daten aus den Content-Collections
+const allTests = await getCollection('tests', ({ data }) => !data.draft);
+const allVergleiche = await getCollection('vergleiche', ({ data }) => !data.draft);
+const allRatgeber = await getCollection('ratgeber', ({ data }) => !data.draft);
 
-const issue = `Ausgabe Nr. 001 · Woche vom ${new Date().toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+const tests = allTests
+  .sort((a, b) => +new Date(b.data.veroeffentlicht) - +new Date(a.data.veroeffentlicht));
+const vergleiche = allVergleiche
+  .sort((a, b) => +new Date(b.data.veroeffentlicht) - +new Date(a.data.veroeffentlicht));
+const ratgeber = allRatgeber
+  .sort((a, b) => +new Date(b.data.veroeffentlicht) - +new Date(a.data.veroeffentlicht));
+
+// Cover-Story = neuester Vergleich (sonst neuester Test)
+const cover = vergleiche[0] ?? tests[0] ?? null;
+const coverUrl = cover
+  ? (vergleiche[0]
+      ? `/vergleiche/${cover.id.replace(/\.md$/, '')}`
+      : `/${cover.data.saeule === 'wellbeing' ? 'wellbeing' : 'finanzen'}/${cover.id.replace(/\.md$/, '')}`)
+  : '/finanzen';
+
+// Echte durchschnittliche Testdauer berechnen
+const durations = tests
+  .map((t) => t.data.testdauerTage)
+  .filter((d): d is number => typeof d === 'number');
+const avgDuration = durations.length
+  ? Math.round(durations.reduce((a, b) => a + b, 0) / durations.length)
+  : 0;
+
+// Latest content für die Cards-Sektion (gemischt: Tests + Vergleiche)
+const latest = [
+  ...tests.map((t) => ({
+    type: 'test' as const,
+    id: t.id.replace(/\.md$/, ''),
+    titel: t.data.titel,
+    beschreibung: t.data.beschreibung,
+    saeule: t.data.saeule,
+    kategorie: t.data.kategorie,
+    veroeffentlicht: t.data.veroeffentlicht,
+    cashbackVerfuegbar: t.data.cashbackVerfuegbar,
+    cashbackBetrag: t.data.cashbackBetrag,
+    produktAnbieter: t.data.produktAnbieter,
+  })),
+  ...vergleiche.map((v) => ({
+    type: 'vergleich' as const,
+    id: v.id.replace(/\.md$/, ''),
+    titel: v.data.titel,
+    beschreibung: v.data.beschreibung,
+    saeule: v.data.saeule,
+    kategorie: 'Vergleich',
+    veroeffentlicht: v.data.veroeffentlicht,
+    cashbackVerfuegbar: false,
+    cashbackBetrag: undefined,
+    produktAnbieter: 'VS',
+  })),
+]
+  .sort((a, b) => +new Date(b.veroeffentlicht) - +new Date(a.veroeffentlicht))
+  .slice(0, 3);
+
+const issueDate = new Date().toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' });
 ---
 <BaseLayout
   title="Finanzkompass"
@@ -26,7 +74,7 @@ const issue = `Ausgabe Nr. 001 · Woche vom ${new Date().toLocaleDateString('de-
     <div class="container">
       <div class="hero-eyebrow">
         <span class="dot" aria-hidden="true"></span>
-        {issue}
+        Stand · {issueDate}
       </div>
       <h1>
         Finanztools &amp; Wellbeing,<br />
@@ -40,6 +88,10 @@ const issue = `Ausgabe Nr. 001 · Woche vom ${new Date().toLocaleDateString('de-
           Aktuelle Tests
           <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </a>
+        <a class="btn-link" href="/ratgeber">
+          Ratgeber
+          <svg class="arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
         <a class="btn-link" href="/cashback">
           Cashback erklärt
           <svg class="arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
@@ -47,125 +99,143 @@ const issue = `Ausgabe Nr. 001 · Woche vom ${new Date().toLocaleDateString('de-
       </div>
 
       <dl class="hero-meta">
-        <div><dt>Tests veröffentlicht</dt><dd class="mono">{tests.length}</dd></div>
+        <div><dt>Tests &amp; Vergleiche</dt><dd class="mono">{tests.length + vergleiche.length}</dd></div>
+        <div><dt>Ratgeber</dt><dd class="mono">{ratgeber.length}</dd></div>
         <div><dt>Sponsored Content</dt><dd class="mono">0</dd></div>
-        <div><dt>Cashback ausgezahlt</dt><dd class="mono">€0</dd></div>
-        <div><dt>Ø Testdauer</dt><dd class="mono">14<span class="unit">Tage</span></dd></div>
+        <div><dt>Ø Testdauer</dt><dd class="mono">{avgDuration > 0 ? avgDuration : '—'}<span class="unit">Tage</span></dd></div>
       </dl>
     </div>
   </section>
 
-  <section class="editors-pick">
-    <div class="container">
-      <div class="section-head">
-        <div>
-          <div class="section-eyebrow"><span class="idx">01</span> · Cover Story</div>
-          <h2 class="section-title">Der Test der Woche</h2>
+  {cover && (
+    <section class="editors-pick">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-eyebrow"><span class="idx">01</span> · Cover Story</div>
+            <h2 class="section-title">Aktuell im Fokus</h2>
+          </div>
+          <div class="section-action">
+            <span>Stand {formatGermanDate(cover.data.aktualisiert)}</span>
+            <span class="mono">→</span>
+            <a href="/vergleiche">Alle Vergleiche</a>
+          </div>
         </div>
-        <div class="section-action">
-          <span>Wöchentlich aktualisiert</span>
-          <span class="mono">→</span>
-          <a href="/vergleiche">Alle Langtests</a>
-        </div>
-      </div>
 
-      <article class="cover-story">
-        <div class="cover-art" data-label="[ Depot-Screenshots im Vergleich · Trade Republic ↔ Scalable Capital ]">
-          <span class="cover-pill">Editor&rsquo;s Pick</span>
-        </div>
-        <div class="cover-body">
-          <div class="cover-cat">Finanzen · Neobroker</div>
-          <h3 class="cover-title">Trade Republic vs. Scalable Capital: 18&nbsp;Monate, ein Depot, eine ehrliche Antwort.</h3>
-          <p class="cover-dek">
-            Wir haben beide Accounts gleichzeitig geführt. Das Ergebnis hängt an einer Frage, die die meisten Vergleichsseiten nicht stellen.
-          </p>
-          <div class="cover-meta">
-            <span>Die Finanzkompass-Redaktion</span>
-            <span class="sep" aria-hidden="true"></span>
-            <span>13. Mai 2026</span>
-            <span class="sep" aria-hidden="true"></span>
-            <span>18 Min. Lesezeit</span>
+        <article class="cover-story">
+          <div class="cover-art" data-label={`[ ${cover.data.titel.slice(0, 80)} ]`}>
+            <span class="cover-pill">Editor&rsquo;s Pick</span>
           </div>
-          <div class="cover-cta">
-            <a class="btn btn-primary" href="/vergleiche/trade-republic-vs-scalable-2026">
-              Vollständigen Test lesen
-              <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-            </a>
-            <span class="card-cashback">Cashback bei beiden verfügbar</span>
+          <div class="cover-body">
+            <div class="cover-cat">
+              {vergleiche[0] ? 'Vergleich' : (cover.data.saeule === 'wellbeing' ? 'Wellbeing' : 'Finanzen')}
+              {!vergleiche[0] && cover.data.kategorie && ` · ${cover.data.kategorie}`}
+            </div>
+            <h3 class="cover-title">{cover.data.titel}</h3>
+            <p class="cover-dek">{cover.data.beschreibung}</p>
+            <div class="cover-meta">
+              <span>Die Finanzkompass-Redaktion</span>
+              <span class="sep" aria-hidden="true"></span>
+              <span>{formatGermanDate(cover.data.veroeffentlicht)}</span>
+            </div>
+            <div class="cover-cta">
+              <a class="btn btn-primary" href={coverUrl}>
+                Zum vollständigen Artikel
+                <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              </a>
+            </div>
           </div>
-        </div>
-      </article>
-    </div>
-  </section>
+        </article>
+      </div>
+    </section>
+  )}
 
   <section id="latest" style="padding-top:0">
     <div class="container">
       <div class="section-head">
         <div>
-          <div class="section-eyebrow"><span class="idx">02</span> · Neueste Tests</div>
-          <h2 class="section-title">Diese Woche veröffentlicht</h2>
+          <div class="section-eyebrow"><span class="idx">02</span> · Neueste Inhalte</div>
+          <h2 class="section-title">Tests &amp; Vergleiche</h2>
         </div>
         <div class="section-action">
-          <a href="/finanzen">Alle Tests ansehen <span class="mono">→</span></a>
+          <a href="/finanzen">Finanzen</a>
+          <span class="mono">·</span>
+          <a href="/wellbeing">Wellbeing</a>
+          <span class="mono">·</span>
+          <a href="/vergleiche">Vergleiche</a>
         </div>
       </div>
     </div>
 
     <div class="container" style="padding-inline:0">
       <div class="cards-3">
-        {tests.length === 0 ? (
-          <>
-            <article class="card">
-              <div class="card-cat"><span class="card-num">001</span> Finanzen · Neobroker</div>
-              <h3 class="card-title"><a href="/finanzen/trade-republic-test-2026">Trade Republic 2026: 18 Monate, ein ehrliches Fazit.</a></h3>
-              <p class="card-excerpt">Wir haben Trade Republic 18 Monate aktiv genutzt — mit Sparplan, Krypto und Einzelaktien. Was die App wirklich kann und wo sie an Grenzen stößt.</p>
-              <div class="card-foot">
-                <div class="left"><span>Die Redaktion</span><span class="sep" aria-hidden="true"></span><span>14 Min.</span></div>
-                <span class="card-logo" aria-hidden="true">TR</span>
+        {latest.map((t, i) => {
+          const href = t.type === 'vergleich'
+            ? `/vergleiche/${t.id}`
+            : `/${t.saeule === 'wellbeing' ? 'wellbeing' : 'finanzen'}/${t.id}`;
+          const accentColor = t.saeule === 'wellbeing' ? 'color:var(--accent-wellbeing)' : '';
+          return (
+            <article class="card" style="position:relative">
+              <div class="card-cat" style={accentColor}>
+                <span class="card-num">{String(i + 1).padStart(3, '0')}</span>
+                {t.type === 'vergleich' ? 'Vergleich' : (t.saeule === 'wellbeing' ? 'Wellbeing' : 'Finanzen')}
+                {t.type !== 'vergleich' && ` · ${t.kategorie}`}
               </div>
-              <span class="card-cashback" style="position:absolute;top:var(--space-6);right:var(--space-8)">12&thinsp;€ Cashback</span>
-            </article>
-            <article class="card">
-              <div class="card-cat" style="color:var(--accent-wellbeing)"><span class="card-num">002</span> Wellbeing · Therapie</div>
-              <h3 class="card-title"><a href="/wellbeing/betterhelp-test-2026">BetterHelp 2026: Was Online-Therapie kann — und was nicht.</a></h3>
-              <p class="card-excerpt">Sechs Wochen, drei Therapeut:innen, ein ehrliches Fazit. Wir schauen unter die Haube von Matching-Algorithmus, Datenschutz und Kostenstruktur.</p>
+              <h3 class="card-title"><a href={href}>{t.titel}</a></h3>
+              <p class="card-excerpt">{t.beschreibung}</p>
               <div class="card-foot">
-                <div class="left"><span>Die Redaktion</span><span class="sep" aria-hidden="true"></span><span>11 Min.</span></div>
-                <span class="card-logo" aria-hidden="true">BH</span>
+                <div class="left"><span>Die Redaktion</span><span class="sep" aria-hidden="true"></span><span>{formatGermanDate(t.veroeffentlicht)}</span></div>
+                <span class="card-logo" aria-hidden="true">{t.produktAnbieter.slice(0,2).toUpperCase()}</span>
               </div>
-              <span class="card-cashback" style="position:absolute;top:var(--space-6);right:var(--space-8)">15&thinsp;€ Cashback</span>
+              {t.cashbackVerfuegbar && t.cashbackBetrag && (
+                <span class="card-cashback" style="position:absolute;top:var(--space-6);right:var(--space-8)">{t.cashbackBetrag}&thinsp;€ Cashback</span>
+              )}
             </article>
-            <article class="card">
-              <div class="card-cat"><span class="card-num">003</span> Vergleiche · Neobroker</div>
-              <h3 class="card-title"><a href="/vergleiche/trade-republic-vs-scalable-2026">Trade Republic vs. Scalable Capital: Der direkte Vergleich.</a></h3>
-              <p class="card-excerpt">Gleiches ETF-Portfolio, gleicher Sparplan, 18 Monate parallel. Die Kostendifferenz war kleiner als erwartet — die Erlebnisdifferenz war größer.</p>
-              <div class="card-foot">
-                <div class="left"><span>Die Redaktion</span><span class="sep" aria-hidden="true"></span><span>18 Min.</span></div>
-                <span class="card-logo" aria-hidden="true">TS</span>
-              </div>
-              <span class="card-cashback" style="position:absolute;top:var(--space-6);right:var(--space-8)">Bis 15&thinsp;€</span>
-            </article>
-          </>
-        ) : tests.map((t, i) => (
-          <article class="card">
-            <div class="card-cat" style={t.data.saeule === 'wellbeing' ? 'color:var(--accent-wellbeing)' : ''}>
-              <span class="card-num">{String(i + 1).padStart(3, '0')}</span>
-              {t.data.saeule === 'wellbeing' ? 'Wellbeing' : 'Finanzen'} · {t.data.kategorie}
-            </div>
-            <h3 class="card-title"><a href={`/${t.data.saeule === 'wellbeing' ? 'wellbeing' : 'finanzen'}/${t.id.replace(/\.md$/, '')}`}>{t.data.titel}</a></h3>
-            <p class="card-excerpt">{t.data.beschreibung}</p>
-            <div class="card-foot">
-              <div class="left"><span>Die Redaktion</span><span class="sep" aria-hidden="true"></span><span>Test</span></div>
-              <span class="card-logo" aria-hidden="true">{t.data.produktAnbieter.slice(0,2).toUpperCase()}</span>
-            </div>
-            {t.data.cashbackVerfuegbar && t.data.cashbackBetrag && (
-              <span class="card-cashback" style="position:absolute;top:var(--space-6);right:var(--space-8)">{t.data.cashbackBetrag}&thinsp;€ Cashback</span>
-            )}
-          </article>
-        ))}
+          );
+        })}
       </div>
     </div>
   </section>
+
+  {ratgeber.length > 0 && (
+    <section style="padding-top:var(--space-12)">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-eyebrow"><span class="idx">03</span> · Grundlagen</div>
+            <h2 class="section-title">Bevor du ein Produkt wählst</h2>
+          </div>
+          <div class="section-action">
+            <a href="/ratgeber">Alle Ratgeber</a>
+            <span class="mono">·</span>
+            <a href="/glossar">Glossar</a>
+            <span class="mono">·</span>
+            <a href="/suche">Suche</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="container" style="padding-inline:0">
+        <div class="cards-3">
+          {ratgeber.slice(0, 3).map((r) => (
+            <article class="card">
+              <div class="card-cat" style={r.data.saeule === 'wellbeing' ? 'color:var(--accent-wellbeing)' : ''}>
+                Ratgeber · {r.data.kategorie}
+                {r.data.isPillarPage && <span style="margin-left:6px;color:var(--accent-secondary);font-weight:600">Pillar</span>}
+              </div>
+              <h3 class="card-title">
+                <a href={`/ratgeber/${r.id.replace(/\.md$/, '')}`}>{r.data.titel}</a>
+              </h3>
+              <p class="card-excerpt">{r.data.beschreibung}</p>
+              <div class="card-foot">
+                <div class="left"><span>Grundlagen</span><span class="sep" aria-hidden="true"></span><span>{formatGermanDate(r.data.aktualisiert)}</span></div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
   <section id="cashback" class="cashback-band cashback">
     <div class="container cashback-grid">
@@ -183,8 +253,8 @@ const issue = `Ausgabe Nr. 001 · Woche vom ${new Date().toLocaleDateString('de-
             So funktioniert Cashback
             <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
           </a>
-          <a class="btn-link" href="/cashback#programme" style="border-color:var(--accent-secondary);color:var(--accent-secondary)">
-            Alle teilnehmenden Produkte
+          <a class="btn-link" href="/ratgeber/cashback-richtig-versteuern" style="border-color:var(--accent-secondary);color:var(--accent-secondary)">
+            Steuerlich richtig behandeln
           </a>
         </div>
       </div>
@@ -212,7 +282,7 @@ const issue = `Ausgabe Nr. 001 · Woche vom ${new Date().toLocaleDateString('de-
         </div>
         <div class="cb-foot">
           <span>Beispiel · Trade Republic Depot</span>
-          <span>Stand 2026-05</span>
+          <span>Stand {issueDate}</span>
         </div>
       </div>
     </div>
@@ -222,7 +292,7 @@ const issue = `Ausgabe Nr. 001 · Woche vom ${new Date().toLocaleDateString('de-
     <div class="container">
       <div class="section-head">
         <div>
-          <div class="section-eyebrow"><span class="idx">03</span> · Themen</div>
+          <div class="section-eyebrow"><span class="idx">04</span> · Ressorts</div>
           <h2 class="section-title">Drei Ressorts. Ein Standard.</h2>
         </div>
         <div class="section-action">

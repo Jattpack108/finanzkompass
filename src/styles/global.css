@@ -32,7 +32,7 @@
   --border-default:#D6D3D1;
   --text-primary:  #1C1917;
   --text-secondary:#57534E;
-  --text-tertiary: #A8A29E;
+  --text-tertiary: #78716C;  /* darkened from #A8A29E → 5.5:1 contrast on bg-primary (WCAG AA) */
   --accent-primary:    #1E40AF;
   --accent-primary-ink:#1E40AF;
   --accent-secondary:  #B45309;

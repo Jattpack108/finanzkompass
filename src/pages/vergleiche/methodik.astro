@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { breadcrumbSchema } from '../../lib/seo';
+
+export const prerender = true;
+
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://finanzkompass.de';
+const breadcrumb = breadcrumbSchema([
+  { name: 'Startseite', url: siteUrl },
+  { name: 'Vergleiche', url: `${siteUrl}/vergleiche` },
+  { name: 'Vergleichs-Methodik', url: `${siteUrl}/vergleiche/methodik` },
+]);
+---
+<BaseLayout
+  title="Vergleichs-Methodik – Wie wir zwei Produkte ehrlich gegenüberstellen"
+  description="Wir vergleichen nicht aus dem Datenblatt, sondern aus Parallelnutzung. Welche Kriterien wir gewichten, wann es keinen Gewinner gibt und warum wir manche Vergleiche nicht machen."
+  jsonLd={breadcrumb}
+>
+  <section class="article-hero">
+    <div class="container" style="max-width:780px">
+      <div class="eyebrow">Methodik · Vergleiche</div>
+      <h1>Wie wir vergleichen.</h1>
+      <p class="dek">
+        Ein Vergleich auf Finanzkompass entsteht nur, wenn wir zwei Produkte parallel und unter denselben Bedingungen über mindestens einen Test-Zyklus genutzt haben. Wir lesen das Kleingedruckte, das die Affiliate-Seiten überspringen — und sagen es klar, wenn es keinen Gewinner gibt.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container" style="max-width:780px">
+      <div class="prose">
+        <h2>Wann wir einen Vergleich machen</h2>
+        <p>Drei Bedingungen müssen erfüllt sein:</p>
+        <ol>
+          <li><strong>Beide Produkte sind direkte Wettbewerber</strong> für denselben Use Case (z. B. zwei Neobroker für Sparplan-Anleger:innen, zwei Online-Therapie-Plattformen für englischsprachige Selbstzahler).</li>
+          <li><strong>Wir haben beide selbst genutzt</strong> — typischerweise parallel über den Standard-Testzeitraum (siehe <a href="/methodik">Testmethodik</a>).</li>
+          <li><strong>Es gibt eine Entscheidungs-Frage</strong>, die wir mit dem Vergleich beantworten können — nicht „Welcher ist besser?" sondern „Welcher passt zu welchem Anlegertyp?"</li>
+        </ol>
+
+        <h2>Wann wir KEINEN Vergleich machen</h2>
+        <ul>
+          <li>Wenn die Produkte unterschiedliche Zielgruppen ansprechen (z. B. Neobroker vs. klassische Direktbank — nicht vergleichbar, beide haben ihre Berechtigung)</li>
+          <li>Wenn wir nur eines selbst nutzen konnten (dann zwei einzelne Tests, kein Vergleich)</li>
+          <li>Wenn die regulatorische Lage zu unterschiedlich ist (z. B. EU-Anbieter vs. US-Anbieter ohne BaFin-Lizenz)</li>
+          <li>Wenn ein Anbieter aus Compliance-Gründen nicht öffentlich getestet werden darf (z. B. exklusive B2B-Konditionen)</li>
+        </ul>
+
+        <h2>Unsere Vergleichs-Kriterien</h2>
+        <p>Jeder Vergleich folgt den fünf Test-Säulen aus der <a href="/methodik">Testmethodik</a>, aber zusätzlich:</p>
+
+        <h3>1. Parallelnutzung statt Datenblatt-Vergleich</h3>
+        <p>
+          Wir vergleichen nicht, was die Anbieter über sich schreiben — sondern was wir parallel erlebt haben. Wenn beide Anbieter behaupten, „beste Bedienung" zu haben, finden wir heraus, was das in echten Touchpoints heißt: Onboarding-Zeit, Reaktionszeit beim Support, App-Performance auf demselben Smartphone.
+        </p>
+
+        <h3>2. Identische Test-Konditionen</h3>
+        <p>Bei Finanz-Vergleichen typischerweise:</p>
+        <ul>
+          <li>Gleiche Sparplan-Beträge</li>
+          <li>Gleiche ETFs (sofern beide sparplanfähig)</li>
+          <li>Gleicher Test-Zeitraum (3–18 Monate)</li>
+          <li>Identische Einzelorder-Anzahl pro Monat</li>
+        </ul>
+        <p>Bei Wellbeing-Vergleichen:</p>
+        <ul>
+          <li>Gleicher Test-Zeitraum</li>
+          <li>Vergleichbare Sitzungs-Frequenz</li>
+          <li>Wo möglich: dieselben Anliegen / Themen, um Vergleichbarkeit zu sichern</li>
+        </ul>
+
+        <h3>3. Spread- und Gebühren-Erfassung</h3>
+        <p>Bei Finanz-Vergleichen erfassen wir alle Kostenkomponenten: Order-Gebühren, Spreads, Verwahrgebühren, Steuer-Reporting-Aufwand, Quersubventionierung. Eine 0-Euro-Order kann durch breitere Spreads teurer sein als eine 1-Euro-Order.</p>
+
+        <h3>4. Subjektive Bewertung mit Begründung</h3>
+        <p>Die fünf Test-Säulen mit Punkten auf einer 0–10-Skala. Eine Differenz von <strong>weniger als 1.0 Punkten</strong> kommunizieren wir als „kein klarer Gewinner" — unter normaler Mess-Unsicherheit nicht aussagekräftig.</p>
+
+        <h3>5. „Für wen passt was?"-Empfehlung</h3>
+        <p>Statt einem Gesamt-Sieger empfehlen wir zielgruppenbasiert:</p>
+        <ul>
+          <li>„Für Sparplan-Anleger mit 100–500 €/Monat → Produkt A"</li>
+          <li>„Für aktive Trader → Produkt B"</li>
+          <li>„Für beide Welten → beide nebeneinander, wenn das Budget reicht"</li>
+        </ul>
+
+        <h2>Wie wir mit Werbe-Versprechen umgehen</h2>
+        <p>Anbieter werben mit Slogans wie „bester Neobroker Deutschlands", „bestes Onboarding", „günstigster Sparplan". Wir prüfen:</p>
+        <ul>
+          <li><strong>Was ist die Datenbasis?</strong> Studie? Eigenmessung? Marketing-Vermutung?</li>
+          <li><strong>Was wird gemessen?</strong> Zufriedenheit aller Kund:innen oder einer bestimmten Demografie?</li>
+          <li><strong>Wer hat die Studie bezahlt?</strong> Unabhängige Stelle oder der Anbieter selbst?</li>
+          <li><strong>Stimmt es mit unserer Erfahrung überein?</strong></li>
+        </ul>
+
+        <h2>Gewichtung — gibt's bei uns nicht (bewusst)</h2>
+        <p>
+          Viele Vergleichs-Sites geben „Gesamtbewertung 8.7 / 10" aus, indem sie verschiedene Kategorien gewichten und addieren. Das ist <strong>methodisch unsauber</strong>: die Gewichtung hängt am Anlegerprofil. Ein „Sparplan-Gewicht" von 30 % ist für einen Day-Trader irrelevant.
+        </p>
+        <p>
+          Wir geben deshalb in jeder Kategorie eine Bewertung, aber keine arithmetisch gewichtete Gesamtnote. Stattdessen: „Empfehlung der Redaktion" — eine subjektive Entscheidung, die wir transparent begründen.
+        </p>
+
+        <h2>Korrekturen, wenn etwas falsch war</h2>
+        <p>Wenn wir in einem Vergleich nachträglich einen Fehler entdecken, korrigieren wir innerhalb von 48 Stunden und dokumentieren das auf der <a href="/korrekturen">Korrekturen-Seite</a>. Wir verstecken keine Fehler.</p>
+
+        <h2>Was du tun kannst, wenn du anderer Meinung bist</h2>
+        <p>
+          Schreib uns. <a href="mailto:korrektur@finanzkompass.de">korrektur@finanzkompass.de</a>. Wenn deine Erfahrung systematisch von unserer abweicht, ist das ein Datenpunkt — möglicherweise eine Demografie, die wir nicht testen konnten, ein neues Produkt-Feature, eine veränderte Anbieter-Praxis. Wir nehmen es ernst.
+        </p>
+
+        <h2>Stand</h2>
+        <p style="color:var(--text-tertiary);font-size:var(--text-sm)">
+          Vergleichs-Methodik-Stand: {new Date().toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}. Versions-Verlauf im <a href="https://github.com/Jattpack108/finanzkompass/blob/main/CHANGELOG.md" rel="noopener">Changelog</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
