@@ -6,6 +6,7 @@
     "strictNullChecks": true,
     "allowJs": true,
     "verbatimModuleSyntax": false,
+    "baseUrl": ".",
     "paths": {
       "@components/*": ["src/components/*"],
       "@layouts/*": ["src/layouts/*"],

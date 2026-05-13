@@ -10,5 +10,9 @@ database_name = "finanzkompass-db"
 database_id = "34b23557-3dfc-4066-80bd-287987a1403b"
 migrations_dir = "migrations"
 
+[[kv_namespaces]]
+binding = "SESSION"
+id = "cfe4439c8d1e434fa5de55d7ac83ccc6"
+
 [vars]
 PUBLIC_SITE_URL = "https://finanzkompass.de"
