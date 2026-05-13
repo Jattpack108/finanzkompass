@@ -1,5 +1,5 @@
 name = "finanzkompass"
-account_id = "07109c77b3f0ebd3199f666b920c961a"
+# account_id is inferred from the API token; not allowed in Pages wrangler.toml
 compatibility_date = "2026-05-01"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "./dist"
