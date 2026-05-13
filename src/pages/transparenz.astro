@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Risikohinweis from '../components/Risikohinweis.astro';
+export const prerender = true;
+---
+<BaseLayout
+  title="Transparenz"
+  description="Wie sich Finanzkompass finanziert, welche Affiliate-Programme wir nutzen, wie unser Cashback-Modell funktioniert."
+>
+  <section class="article-hero">
+    <div class="container">
+      <div class="eyebrow">Transparenz</div>
+      <h1>Wie wir uns finanzieren.</h1>
+      <p class="dek">
+        Affiliate-Provisionen sind unsere einzige Einnahmequelle. Diese Seite erklärt, wie das genau funktioniert, welche Programme wir nutzen und welcher Teil als Cashback an dich zurückgeht.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container" style="max-width:780px">
+      <div class="prose">
+        <h2>Affiliate-Provisionen</h2>
+        <p>Wenn du ein Produkt über einen Link bei uns abschließt, erhalten wir eine Vermittlungsprovision vom jeweiligen Anbieter. <strong>Du zahlst dabei keinen Cent mehr</strong> als bei direktem Abschluss — der Anbieter bezahlt uns aus seinem eigenen Marketing-Budget.</p>
+        <p>Provisionen variieren je nach Produkt: bei Neobrokern typischerweise 30–60 € pro Depot-Eröffnung, bei Online-Therapie 100–200 USD, bei Steuersoftware 8–15 €.</p>
+
+        <h2>Was wir <em>nicht</em> tun</h2>
+        <ul>
+          <li>Wir nehmen kein Sponsored Content an.</li>
+          <li>Wir nehmen keine bezahlten Reviews an.</li>
+          <li>Wir nehmen keine Produktproben unter Bedingungen an.</li>
+          <li>Wir lassen Anbieter Artikel <em>nicht</em> gegenlesen oder freigeben.</li>
+          <li>Wir bewerten Produkte nicht besser, weil sie höhere Provisionen zahlen.</li>
+        </ul>
+
+        <h2>Cashback-Modell</h2>
+        <p>Bei ausgewählten Produkten geben wir einen Teil unserer Provision als Cashback an dich zurück. Konkretes Beispiel:</p>
+        <ul>
+          <li>Du eröffnest ein Trade Republic Depot über unseren Link.</li>
+          <li>Trade Republic zahlt uns ~20 € Vermittlungsprovision (nach 30 Tagen Stornofrist).</li>
+          <li>Wir behalten 8 € für Test- und Redaktionskosten.</li>
+          <li>Du bekommst 12 € Cashback ausgezahlt — per PayPal oder SEPA.</li>
+        </ul>
+        <p>Den Antrag stellst du unter <a href="/cashback">/cashback</a>, sobald dein Abschluss durch ist.</p>
+
+        <h2>Genutzte Affiliate-Programme &amp; Netzwerke</h2>
+        <ul>
+          <li><strong>financeAds.net</strong> — Dachnetzwerk für DACH-Finanzpartner (Trade Republic, Scalable, comdirect u.a.)</li>
+          <li><strong>Tarifcheck-Partnerprogramm</strong> — Versicherungsvergleich</li>
+          <li><strong>CHECK24-Partnerprogramm</strong> — Strom/Gas, Versicherungen, Banking</li>
+          <li><strong>Awin</strong> — diverse direkte Programme</li>
+          <li><strong>Impact</strong> — internationale Programme (BetterHelp, Calm)</li>
+          <li><strong>Direct</strong> — direkte Programme einzelner Anbieter</li>
+        </ul>
+
+        <h2>Was wir mit der Provision finanzieren</h2>
+        <p>Server-Hosting, Test-Accounts (echtes Geld auf echten Konten), Lektorat, Recherche-Zeit, Software-Lizenzen. Etwa 30–60 % einer eingenommenen Provision geht in Folgekosten der Site, ein Teil als Cashback an dich, der Rest als Vergütung an die Redaktion.</p>
+
+        <h2 id="risikohinweis">Risikohinweise</h2>
+        <p>Wir testen viele Produkte aus den Bereichen Geldanlage, Versicherung und mentale Gesundheit. Diese Produkte sind regulierte Finanzdienstleistungen bzw. Gesundheitsangebote. Unsere Artikel sind keine Anlageberatung, keine Versicherungsberatung und keine medizinische Beratung. Bei wichtigen Entscheidungen empfehlen wir eine individuelle Beratung durch qualifizierte Fachpersonen.</p>
+        <Risikohinweis variant="investment" />
+
+        <p style="font-size:var(--text-sm);color:var(--text-tertiary);margin-top:var(--space-12)">Stand dieser Seite: {new Date().toLocaleDateString('de-DE')}.</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

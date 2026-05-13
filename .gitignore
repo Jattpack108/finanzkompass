@@ -1,0 +1,28 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+*.log
+npm-debug.log*
+
+# env
+.env
+.env.production
+.dev.vars
+
+# editor
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# wrangler
+.wrangler/
+.mf/
+
+# misc
+*.tsbuildinfo

@@ -1,0 +1,20 @@
+---
+import RatgeberLayout from '../../layouts/RatgeberLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const items = await getCollection('ratgeber', ({ data }) => !data.draft);
+  return items.map((entry) => ({
+    params: { slug: entry.id.replace(/\.md$/, '') },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+---
+<RatgeberLayout entry={entry} headings={headings}>
+  <Content />
+</RatgeberLayout>

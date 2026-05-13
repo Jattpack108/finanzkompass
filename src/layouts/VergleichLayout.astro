@@ -1,0 +1,67 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import VergleichsTabelle from '../components/VergleichsTabelle.astro';
+import Risikohinweis from '../components/Risikohinweis.astro';
+import AutorenBox from '../components/AutorenBox.astro';
+import QuellenListe from '../components/QuellenListe.astro';
+import Inhaltsverzeichnis from '../components/Inhaltsverzeichnis.astro';
+import { breadcrumbSchema, formatGermanDate } from '../lib/seo';
+import type { CollectionEntry } from 'astro:content';
+
+export interface Props {
+  entry: CollectionEntry<'vergleiche'>;
+  headings: Array<{ depth: number; slug: string; text: string }>;
+}
+
+const { entry, headings } = Astro.props;
+const d = entry.data;
+
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://finanzkompass.de';
+const articleUrl = new URL(Astro.url.pathname, siteUrl).toString();
+
+const showRisiko = d.saeule === 'finance' || d.saeule === 'mixed';
+
+const breadcrumb = breadcrumbSchema([
+  { name: 'Startseite', url: siteUrl },
+  { name: 'Vergleiche', url: `${siteUrl}/vergleiche` },
+  { name: d.titel, url: articleUrl },
+]);
+---
+<BaseLayout
+  title={d.titel}
+  description={d.beschreibung}
+  jsonLd={breadcrumb}
+>
+  <article>
+    <header class="article-hero">
+      <div class="container" style="max-width:960px">
+        <div class="eyebrow">Vergleich · {d.saeule}</div>
+        <h1>{d.titel}</h1>
+        <p class="dek">{d.beschreibung}</p>
+        <div class="article-meta">
+          <strong>Die Finanzkompass-Redaktion</strong>
+          <span class="sep" aria-hidden="true"></span>
+          <span>Zuletzt aktualisiert: {formatGermanDate(d.aktualisiert)}</span>
+          <span class="sep" aria-hidden="true"></span>
+          <span>Gewinner: <strong>{d.gewinner}</strong></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="container" style="max-width:960px">
+      <div class="prose">
+        <Inhaltsverzeichnis headings={headings} />
+
+        <VergleichsTabelle produkte={d.produkte} />
+
+        <slot />
+
+        {showRisiko && <Risikohinweis variant="investment" />}
+
+        <AutorenBox testdatum={formatGermanDate(d.aktualisiert)} />
+
+        <QuellenListe quellen={d.quellen} />
+      </div>
+    </div>
+  </article>
+</BaseLayout>

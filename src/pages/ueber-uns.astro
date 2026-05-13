@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+export const prerender = true;
+---
+<BaseLayout
+  title="Über uns"
+  description="Finanzkompass ist ein zweiköpfiges Redaktionsprojekt. Wir testen Finanztools und Wellbeing-Apps auf eigene Kosten."
+>
+  <section class="article-hero">
+    <div class="container">
+      <div class="eyebrow">Über uns</div>
+      <h1>Zwei Personen. Ein Standard. Keine Sponsored Posts.</h1>
+      <p class="dek">
+        Finanzkompass ist ein unabhängiges Redaktionsprojekt aus Deutschland. Wir testen Finanztools, Banking-Apps, ETF-Plattformen, Online-Therapie und Mindfulness-Anwendungen — mit echten Accounts, eigenem Geld und ohne Vorab-Absprachen mit Anbietern.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container" style="max-width:780px">
+      <div class="prose">
+        <h2>Warum Finanzen <em>und</em> Wellbeing?</h2>
+        <p>Die meisten Menschen suchen Glück entweder im Geld oder im Kopf — selten in beidem gleichzeitig. Wir glauben: Wer seine Finanzen im Griff hat, kann klarer denken. Wer mental stabil ist, trifft bessere Finanzentscheidungen. Beides gehört zusammen.</p>
+
+        <h2>Wie wir arbeiten</h2>
+        <p>Jeder Test wird mit einem echten Account durchgeführt, auf eigene Kosten. Wir nehmen keine Produktproben, keine bezahlten Reisen, keine "Editorial Partnerships". Wenn wir ein Produkt empfehlen, haben wir es benutzt — meistens über Wochen oder Monate.</p>
+        <p>Unsere Methodik ist <a href="/methodik">öffentlich dokumentiert</a>. Jede Bewertung folgt denselben Kriterien. Aktualisierungen werden datiert. Fehler korrigieren wir transparent und behalten den ursprünglichen Stand im Versionsverlauf.</p>
+
+        <h2>Wie wir uns finanzieren</h2>
+        <p>Wenn du ein getestetes Produkt über unsere Links abschließt, erhalten wir eine standardisierte Affiliate-Provision. <strong>Einen Teil davon geben wir als Cashback an dich zurück</strong> — transparent aufgeschlüsselt im jeweiligen Artikel und auf unserer <a href="/cashback">Cashback-Seite</a>.</p>
+        <p>Wir nehmen kein Sponsored Content an. Wir verkaufen keine Datenprodukte. Wir bewerben keine Produkte, die wir nicht selbst getestet haben.</p>
+
+        <h2>Wer wir sind</h2>
+        <p>Die Finanzkompass-Redaktion besteht aus zwei Personen mit Hintergründen in Finanzjournalismus und Technologie. Konkrete Namen, Hintergründe und Kontakt findest du im <a href="/impressum">Impressum</a> und auf der <a href="/transparenz">Transparenz-Seite</a>.</p>
+
+        <h2>Was du von uns erwarten kannst</h2>
+        <ul>
+          <li>Tests mit echten Accounts, nicht Demo-Versionen</li>
+          <li>Klare Methodik, transparent dokumentiert</li>
+          <li>Update-Datum auf jedem Artikel</li>
+          <li>Affiliate-Hinweis auf jeder Seite</li>
+          <li>Quellenangaben für alle Zahlen</li>
+          <li>Risikohinweise, wo es Geld oder Gesundheit betrifft</li>
+        </ul>
+
+        <h2>Kontakt</h2>
+        <p>Feedback, Hinweise oder ein Fehler entdeckt? <a href="/kontakt">Schreib uns</a> — oder direkt an <a href="mailto:kontakt@finanzkompass.de">kontakt@finanzkompass.de</a>.</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

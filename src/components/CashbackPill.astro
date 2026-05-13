@@ -1,0 +1,9 @@
+---
+export interface Props {
+  betrag: number;
+  prefix?: string;
+}
+const { betrag, prefix = '' } = Astro.props;
+const formatted = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(betrag);
+---
+<span class="card-cashback" data-cashback="true">{prefix}{formatted} Cashback</span>

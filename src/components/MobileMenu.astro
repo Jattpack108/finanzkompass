@@ -1,0 +1,46 @@
+---
+const nav = [
+  { label: 'Finanzen',   href: '/finanzen' },
+  { label: 'Wellbeing',  href: '/wellbeing' },
+  { label: 'Vergleiche', href: '/vergleiche' },
+  { label: 'Ratgeber',   href: '/ratgeber' },
+  { label: 'Cashback',   href: '/cashback' },
+  { label: 'Newsletter', href: '/#newsletter' },
+  { label: 'Über uns',   href: '/ueber-uns' },
+];
+---
+<div class="mobile-menu" id="mobileMenu" data-open="false" aria-hidden="true">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-6)">
+    <span class="brand-mark">Finanzkompass<span class="dot">.</span></span>
+    <button class="theme-btn" id="mobileMenuClose" aria-label="Menü schließen" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6l-12 12"/></svg>
+    </button>
+  </div>
+  {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+</div>
+
+<script is:inline>
+  (function() {
+    const toggle = document.getElementById('mobileMenuToggle');
+    const menu = document.getElementById('mobileMenu');
+    const close = document.getElementById('mobileMenuClose');
+    if (!toggle || !menu || !close) return;
+    function open() {
+      menu.dataset.open = 'true';
+      menu.setAttribute('aria-hidden', 'false');
+      toggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+    function shut() {
+      menu.dataset.open = 'false';
+      menu.setAttribute('aria-hidden', 'true');
+      toggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+    toggle.addEventListener('click', open);
+    close.addEventListener('click', shut);
+    menu.addEventListener('click', (e) => {
+      if (e.target instanceof HTMLAnchorElement) shut();
+    });
+  })();
+</script>

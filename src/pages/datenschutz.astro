@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+export const prerender = true;
+---
+<BaseLayout
+  title="Datenschutzerklärung"
+  description="Datenschutzerklärung von Finanzkompass nach DSGVO. Welche Daten wir verarbeiten, warum und wie lange."
+  noindex={false}
+>
+  <section class="article-hero">
+    <div class="container">
+      <div class="eyebrow">Rechtliches</div>
+      <h1>Datenschutzerklärung</h1>
+      <p class="dek">Stand: {new Date().toLocaleDateString('de-DE')}</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container" style="max-width:780px">
+      <div class="prose">
+        <h2>1. Verantwortlicher</h2>
+        <p>
+          [Vorname Nachname]<br />
+          [Straße + Nr.]<br />
+          [PLZ Ort]<br />
+          E-Mail: <a href="mailto:datenschutz@finanzkompass.de">datenschutz@finanzkompass.de</a>
+        </p>
+
+        <h2>2. Hosting (Cloudflare)</h2>
+        <p>Diese Website wird bei Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, USA gehostet (Cloudflare Pages). Bei jedem Aufruf werden technisch notwendige Verbindungsdaten (IP-Adresse, Datum/Uhrzeit, aufgerufene Seite, User-Agent) verarbeitet. Diese Daten werden nicht dauerhaft mit deiner Person verknüpft gespeichert. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer funktionierenden Website).</p>
+        <p>Zwischen uns und Cloudflare besteht ein Auftragsverarbeitungsvertrag (AVV) und Cloudflare ist nach EU-Standardvertragsklauseln verpflichtet.</p>
+
+        <h2>3. Cloudflare Web Analytics (cookie-frei)</h2>
+        <p>Wir nutzen Cloudflare Web Analytics zur anonymen Reichweitenmessung. Dabei werden <strong>keine Cookies</strong> gesetzt, keine IP-Adressen gespeichert und kein Tracking über Sitzungen hinaus durchgeführt. Erfasst werden ausschließlich aggregierte Daten (Seitenaufrufe, Verweildauer, Geräte-Kategorie). Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
+
+        <h2>4. Newsletter (Double-Opt-In)</h2>
+        <p>Du kannst unseren Newsletter abonnieren, indem du deine E-Mail-Adresse einträgst. Nach Eingabe erhältst du eine Bestätigungs-E-Mail mit einem Link. Erst nach Klick auf diesen Link bist du eingetragen (Double-Opt-In nach §7 Abs. 2 Nr. 3 UWG).</p>
+        <p>Gespeichert werden: deine E-Mail-Adresse, Zeitpunkt der Anmeldung, Zeitpunkt der Bestätigung, die Seite, auf der du dich angemeldet hast (zur Spam-Vermeidung).</p>
+        <p>Versanddienstleister ist Resend (Resend Labs, Inc., USA) — die Daten werden auf Basis eines AVV und der Standardvertragsklauseln übermittelt. Du kannst den Newsletter jederzeit über den Link in jeder E-Mail abbestellen. Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO (Einwilligung).</p>
+
+        <h2>5. Cashback-Antragsformular</h2>
+        <p>Bei einem Cashback-Antrag verarbeiten wir: deine E-Mail, das gewählte Produkt, deine Bestätigungs-/Order-ID, deine PayPal-Adresse oder Bankverbindung (für die Auszahlung). Diese Daten werden ausschließlich zur Abwicklung der Cashback-Auszahlung gespeichert und nach 36 Monaten (Aufbewahrungsfrist nach AO/HGB) gelöscht. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung).</p>
+
+        <h2>6. Affiliate-Tracking</h2>
+        <p>Wenn du auf einen Affiliate-Link klickst, leitet dich ein interner Redirect (<code>/api/affiliate-redirect</code>) auf das Partner-Angebot weiter. Bei diesem Redirect protokollieren wir intern <em>anonym</em>: das Produkt, die Quelle-Seite, den Zeitpunkt, das Land (per Cloudflare-IP-Geolocation auf Länder-Ebene). <strong>Wir speichern keine IP-Adresse und keine Person-bezogenen Identifier</strong>. Auf der Zielseite gelten die Cookie- und Datenschutzbestimmungen des jeweiligen Partners. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
+
+        <h2>7. Deine Rechte</h2>
+        <p>Du hast Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung (Art. 18), Datenübertragbarkeit (Art. 20) sowie Widerspruch (Art. 21) und Beschwerde bei der Aufsichtsbehörde (Art. 77). Anfragen an: <a href="mailto:datenschutz@finanzkompass.de">datenschutz@finanzkompass.de</a>.</p>
+
+        <h2>8. Datenübermittlung in Drittländer</h2>
+        <p>Cloudflare und Resend sind US-Anbieter. Die Übermittlung erfolgt auf Basis der EU-Standardvertragsklauseln (Art. 46 Abs. 2 lit. c DSGVO) und ergänzender Maßnahmen.</p>
+
+        <h2>9. Änderungen dieser Erklärung</h2>
+        <p>Wir behalten uns vor, diese Datenschutzerklärung anzupassen, wenn sich die rechtliche Lage oder die verarbeiteten Datenkategorien ändern. Die jeweils aktuelle Fassung ist auf dieser Seite abrufbar.</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

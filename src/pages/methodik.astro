@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { faqSchema } from '../lib/seo';
+export const prerender = true;
+
+const faqs = [
+  {
+    frage: 'Werden Tests von Anbietern bezahlt?',
+    antwort: 'Nein. Wir nehmen keine bezahlten Tests, kein Sponsored Content und keine Produktproben unter Bedingungen an. Affiliate-Provisionen entstehen erst nach einem freiwilligen Abschluss durch unsere Leser — sie haben keinen Einfluss auf Inhalte oder Bewertung.',
+  },
+  {
+    frage: 'Wie lange dauert ein Test typischerweise?',
+    antwort: 'Finance-Produkte: mindestens 14 Tage aktive Nutzung mit echten Beträgen. Tiefer-Tests (z.B. Depot-Vergleich) laufen über 3–18 Monate. Wellbeing-Apps: mindestens 4 Wochen tägliche Nutzung. Online-Therapie: mindestens 4 Sitzungen mit verschiedenen Therapeut:innen.',
+  },
+  {
+    frage: 'Was passiert, wenn sich ein Produkt ändert?',
+    antwort: 'Wir markieren betroffene Artikel sofort als "Aktualisierung steht aus" und überarbeiten innerhalb von 14 Tagen. Das Erstveröffentlichungsdatum bleibt erhalten, das Update-Datum wird prominent angezeigt.',
+  },
+  {
+    frage: 'Wie geht ihr mit Fehlern um?',
+    antwort: 'Fehler korrigieren wir unmittelbar nach Bekanntwerden und dokumentieren die Korrektur am Artikelende. Wir verstecken keine Fehlerstände.',
+  },
+];
+---
+<BaseLayout
+  title="Methodik"
+  description="So testen wir bei Finanzkompass: Kriterien, Testdauer, Bewertungssystem, Update-Zyklen."
+  jsonLd={faqSchema(faqs)}
+>
+  <section class="article-hero">
+    <div class="container">
+      <div class="eyebrow">Methodik</div>
+      <h1>So testen wir.</h1>
+      <p class="dek">
+        Jeder Test folgt denselben Kriterien — unabhängig vom Anbieter, unabhängig von der möglichen Provision. Dieses Dokument ist verbindlich und wird datiert aktualisiert.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container" style="max-width:780px">
+      <div class="prose">
+        <h2>Die fünf Test-Säulen</h2>
+        <ol>
+          <li><strong>Kostenstruktur</strong> — alle Gebühren über die gesamte Nutzungsdauer, inklusive versteckter Spreads und Stornofristen.</li>
+          <li><strong>Produkt &amp; Auswahl</strong> — Verfügbarkeit, Sparplan-Konditionen, ETF-Universum bzw. Therapeuten-Pool.</li>
+          <li><strong>Bedienung</strong> — App-Performance auf iOS und Android, Web-Interface, Onboarding-Flow.</li>
+          <li><strong>Service &amp; Sicherheit</strong> — Kundenservice-Antwortzeit, 2FA, Datenschutz, Einlagensicherung bzw. Therapeuten-Qualifikation.</li>
+          <li><strong>Realwert</strong> — Was bekommst du am Ende für dein Geld, verglichen mit Alternativen.</li>
+        </ol>
+
+        <h2>Bewertungssystem</h2>
+        <p>Wir vergeben Punkte auf einer Skala von 0–10 in halben Schritten. 9.0+ vergeben wir nur dann, wenn das Produkt in allen fünf Säulen überdurchschnittlich abschneidet. Eine 8.0 ist eine starke Empfehlung. Unter 6.0 raten wir aktiv ab.</p>
+
+        <h2>Testdauer</h2>
+        <ul>
+          <li><strong>Banking / Neobroker</strong>: mindestens 30 Tage aktive Nutzung mit echtem Geld</li>
+          <li><strong>Depot-Vergleich</strong>: 3–18 Monate Parallelbetrieb</li>
+          <li><strong>Steuersoftware</strong>: eine komplette Steuererklärung im Echtbetrieb</li>
+          <li><strong>Wellbeing-Apps</strong>: 4 Wochen tägliche Nutzung</li>
+          <li><strong>Online-Therapie</strong>: mindestens 4 Sitzungen mit unterschiedlichen Therapeut:innen</li>
+        </ul>
+
+        <h2>Update-Zyklus</h2>
+        <p>Alle Artikel werden mindestens halbjährlich überprüft. Bei Preis-, Konditions- oder Produktänderungen aktualisieren wir innerhalb von 14 Tagen. Das Update-Datum erscheint prominent am Artikelanfang.</p>
+
+        <h2>Was wir nicht testen</h2>
+        <ul>
+          <li>Produkte, für die wir keine eigene Erfahrung sammeln können (z.B. exklusive B2B-Tools ohne Testzugang).</li>
+          <li>Produkte, die wir aus Compliance-Gründen nicht öffentlich behandeln dürfen.</li>
+          <li>Crypto-"Anlage"-Produkte mit unklarem regulatorischen Status.</li>
+        </ul>
+
+        <h2>FAQ</h2>
+        {faqs.map((f) => (
+          <>
+            <h3>{f.frage}</h3>
+            <p>{f.antwort}</p>
+          </>
+        ))}
+
+        <p style="font-size:var(--text-sm);color:var(--text-tertiary);margin-top:var(--space-12)">Methodik-Stand: {new Date().toLocaleDateString('de-DE')}. Bei Änderungen behalten wir die vorherigen Fassungen in unserem Versionsverlauf.</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

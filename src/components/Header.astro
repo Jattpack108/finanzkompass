@@ -1,0 +1,43 @@
+---
+import ThemeToggleScript from './ThemeToggleScript.astro';
+import MobileMenu from './MobileMenu.astro';
+
+const path = Astro.url.pathname;
+const isActive = (prefix: string) =>
+  path === prefix || path.startsWith(prefix + '/') || path.startsWith(prefix);
+
+const nav = [
+  { label: 'Finanzen',   href: '/finanzen',   prefix: '/finanzen' },
+  { label: 'Wellbeing',  href: '/wellbeing',  prefix: '/wellbeing' },
+  { label: 'Vergleiche', href: '/vergleiche', prefix: '/vergleiche' },
+  { label: 'Ratgeber',   href: '/ratgeber',   prefix: '/ratgeber' },
+];
+---
+<div class="masthead-wrap">
+  <div class="container masthead">
+    <a class="brand" href="/" aria-label="Finanzkompass — Startseite">
+      <span class="brand-mark">Finanzkompass<span class="dot">.</span></span>
+      <span class="brand-tag">Finanzen &amp; Wellbeing</span>
+    </a>
+    <nav class="nav" aria-label="Hauptnavigation">
+      {nav.map((item) => (
+        <a href={item.href} class={isActive(item.prefix) ? 'is-active' : ''}>{item.label}</a>
+      ))}
+      <span class="nav-sep" aria-hidden="true"></span>
+      <a href="/cashback" class={isActive('/cashback') ? 'is-active' : ''}>Cashback</a>
+    </nav>
+
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="theme-btn" id="themeToggle" aria-label="Hell-/Dunkelmodus umschalten" type="button">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+      <button class="theme-btn mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobileMenu" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<MobileMenu />
+<ThemeToggleScript />

@@ -1,0 +1,67 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Risikohinweis from '../components/Risikohinweis.astro';
+import AutorenBox from '../components/AutorenBox.astro';
+import QuellenListe from '../components/QuellenListe.astro';
+import Inhaltsverzeichnis from '../components/Inhaltsverzeichnis.astro';
+import { breadcrumbSchema, formatGermanDate } from '../lib/seo';
+import type { CollectionEntry } from 'astro:content';
+
+export interface Props {
+  entry: CollectionEntry<'ratgeber'>;
+  headings: Array<{ depth: number; slug: string; text: string }>;
+}
+
+const { entry, headings } = Astro.props;
+const d = entry.data;
+
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://finanzkompass.de';
+const articleUrl = new URL(Astro.url.pathname, siteUrl).toString();
+
+const showRisikoInvestment = d.saeule === 'finance' || d.saeule === 'mixed';
+const showRisikoTherapie = d.saeule === 'wellbeing';
+
+const breadcrumb = breadcrumbSchema([
+  { name: 'Startseite', url: siteUrl },
+  { name: 'Ratgeber', url: `${siteUrl}/ratgeber` },
+  { name: d.titel, url: articleUrl },
+]);
+---
+<BaseLayout
+  title={d.titel}
+  description={d.beschreibung}
+  jsonLd={breadcrumb}
+>
+  <article>
+    <header class="article-hero">
+      <div class="container" style="max-width:960px">
+        <div class="eyebrow">
+          Ratgeber · {d.kategorie}
+          {d.isPillarPage && <span style="margin-left:8px;color:var(--accent-secondary)">· Pillar</span>}
+        </div>
+        <h1>{d.titel}</h1>
+        <p class="dek">{d.beschreibung}</p>
+        <div class="article-meta">
+          <strong>Die Finanzkompass-Redaktion</strong>
+          <span class="sep" aria-hidden="true"></span>
+          <span>Zuletzt aktualisiert: {formatGermanDate(d.aktualisiert)}</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="container" style="max-width:780px">
+      <div class="prose">
+        <Inhaltsverzeichnis headings={headings} />
+
+        <slot />
+
+        {showRisikoInvestment && <Risikohinweis variant="investment" />}
+        {showRisikoTherapie && <Risikohinweis variant="therapie" />}
+
+        <AutorenBox testdatum={formatGermanDate(d.aktualisiert)} />
+
+        <QuellenListe quellen={d.quellen} />
+      </div>
+    </div>
+  </article>
+</BaseLayout>

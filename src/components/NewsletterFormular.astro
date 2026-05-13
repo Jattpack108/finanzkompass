@@ -1,0 +1,62 @@
+---
+export interface Props {
+  variant?: 'inline' | 'banner';
+  quelle?: string;
+}
+const { variant = 'banner', quelle = Astro.url.pathname } = Astro.props;
+---
+{variant === 'banner' ? (
+  <section class="newsletter" id="newsletter">
+    <div class="container newsletter-inner">
+      <div>
+        <h2 class="serif-text">Eine E-Mail pro Woche. Die Tools, die es wert sind.</h2>
+        <p>Keine Tracking-Pixel, kein Sponsored Content, kein algorithmischer Füller. Nur die Tests der Woche, offene Fragen — und Cashback-Updates.</p>
+      </div>
+      <div>
+        <form method="post" action="/api/newsletter" data-newsletter-form>
+          <label for="nl-email" class="sr-only">E-Mail-Adresse</label>
+          <input id="nl-email" name="email" type="email" placeholder="deine@email.de" autocomplete="email" required />
+          <input type="hidden" name="quelle" value={quelle} />
+          <button type="submit">
+            Abonnieren
+            <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+        <p class="newsletter-fine">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Wöchentlich · Jederzeit abbestellbar · Kein Spam · Double-Opt-In
+        </p>
+        <p style="margin-top:8px;font-size:var(--text-xs);color:var(--text-tertiary)" data-newsletter-feedback hidden></p>
+      </div>
+    </div>
+  </section>
+) : (
+  <form method="post" action="/api/newsletter" data-newsletter-form style="display:flex;gap:8px;flex-wrap:wrap;margin:var(--space-6) 0">
+    <input name="email" type="email" placeholder="deine@email.de" required style="flex:1;min-width:220px;padding:12px 14px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-elevated);color:var(--text-primary)" />
+    <input type="hidden" name="quelle" value={quelle} />
+    <button class="btn btn-primary" type="submit">Abonnieren</button>
+  </form>
+)}
+
+<script is:inline>
+  document.querySelectorAll('form[data-newsletter-form]').forEach((form) => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const fb = form.parentElement?.querySelector('[data-newsletter-feedback]');
+      try {
+        const res = await fetch('/api/newsletter', { method: 'POST', body: data });
+        const json = await res.json();
+        if (fb) {
+          fb.hidden = false;
+          fb.textContent = json.ok
+            ? 'Fast geschafft — bitte bestätige den Link in der E-Mail.'
+            : (json.error || 'Anmeldung fehlgeschlagen.');
+        }
+        if (json.ok && form instanceof HTMLFormElement) form.reset();
+      } catch (err) {
+        if (fb) { fb.hidden = false; fb.textContent = 'Netzwerkfehler — bitte später erneut versuchen.'; }
+      }
+    });
+  });
+</script>

@@ -1,0 +1,31 @@
+---
+export interface Props {
+  variant: 'investment' | 'therapie' | 'kredit' | 'versicherung';
+}
+const { variant } = Astro.props;
+
+const TEXTS: Record<Props['variant'], { label: string; body: string }> = {
+  investment: {
+    label: 'Risikohinweis · Geldanlage',
+    body: 'Investitionen in Wertpapiere sind mit Risiken verbunden, bis hin zum Totalverlust des eingesetzten Kapitals. Vergangene Wertentwicklungen garantieren keine zukünftigen Erträge. Dieser Artikel stellt keine Anlageberatung im Sinne des WpHG dar und ersetzt keine individuelle Beratung.',
+  },
+  therapie: {
+    label: 'Hinweis · Psychische Gesundheit',
+    body: 'Online-Therapie-Plattformen ersetzen keine psychiatrische Notfallversorgung. Bei akuten Krisen oder Suizidgedanken wende dich bitte sofort an die Telefonseelsorge: 0800 111 0 111 oder 0800 111 0 222 (kostenlos, rund um die Uhr).',
+  },
+  kredit: {
+    label: 'Risikohinweis · Kredit',
+    body: 'Kredite sind kostenpflichtige Verbindlichkeiten. Prüfe vor Abschluss deine finanzielle Tragfähigkeit. Eine unabhängige Schuldnerberatung ist über die örtlichen Verbraucherzentralen kostenlos erreichbar.',
+  },
+  versicherung: {
+    label: 'Hinweis · Versicherungsvergleich',
+    body: 'Versicherungsvergleiche bilden öffentlich verfügbare Tarifdaten ab und ersetzen keine individuelle Beratung. Bedingungen können sich ändern; maßgeblich sind die Versicherungsbedingungen des jeweiligen Anbieters.',
+  },
+};
+
+const { label, body } = TEXTS[variant];
+---
+<aside class="risikohinweis" id={variant === 'investment' ? 'risikohinweis' : undefined}>
+  <div class="label">{label}</div>
+  <p>{body}</p>
+</aside>

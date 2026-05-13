@@ -1,0 +1,21 @@
+---
+export interface Props {
+  quellen: Array<{ titel: string; url?: string; herausgeber?: string }>;
+}
+const { quellen } = Astro.props;
+---
+{quellen.length > 0 && (
+  <section style="margin-top:var(--space-12);padding-top:var(--space-8);border-top:1px solid var(--border-subtle)">
+    <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:var(--space-4)">
+      Quellen
+    </div>
+    <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:var(--space-2)">
+      {quellen.map((q) => (
+        <li style="font-size:var(--text-sm);color:var(--text-secondary)">
+          {q.url ? <a href={q.url} rel="nofollow noopener" target="_blank">{q.titel}</a> : <span>{q.titel}</span>}
+          {q.herausgeber && <span style="color:var(--text-tertiary)"> — {q.herausgeber}</span>}
+        </li>
+      ))}
+    </ul>
+  </section>
+)}

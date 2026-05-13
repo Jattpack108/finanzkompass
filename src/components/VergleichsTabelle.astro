@@ -1,0 +1,71 @@
+---
+import AffiliateLink from './AffiliateLink.astro';
+import CashbackPill from './CashbackPill.astro';
+
+export interface Produkt {
+  name: string;
+  anbieter: string;
+  affiliateUrl: string;
+  preisInfo: string;
+  bewertung: number;
+  bestFuer: string;
+  cashbackBetrag?: number;
+}
+
+export interface Props {
+  produkte: Produkt[];
+}
+
+const { produkte } = Astro.props;
+---
+<div class="vergleich-tabelle" role="region" aria-label="Produkt-Vergleichstabelle">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Kriterium</th>
+        {produkte.map((p) => <th scope="col">{p.anbieter}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Produkt</th>
+        {produkte.map((p) => <td>{p.name}</td>)}
+      </tr>
+      <tr>
+        <th scope="row">Bewertung</th>
+        {produkte.map((p) => <td><strong>{p.bewertung.toFixed(1)}</strong> / 10</td>)}
+      </tr>
+      <tr>
+        <th scope="row">Preis</th>
+        {produkte.map((p) => <td>{p.preisInfo}</td>)}
+      </tr>
+      <tr>
+        <th scope="row">Empfohlen für</th>
+        {produkte.map((p) => <td>{p.bestFuer}</td>)}
+      </tr>
+      <tr>
+        <th scope="row">Cashback</th>
+        {produkte.map((p) => <td>{p.cashbackBetrag ? <CashbackPill betrag={p.cashbackBetrag} /> : '—'}</td>)}
+      </tr>
+      <tr>
+        <th scope="row">Zum Anbieter</th>
+        {produkte.map((p) => (
+          <td>
+            <AffiliateLink href={p.affiliateUrl} produktName={p.name} variant="secondary">
+              {p.anbieter}
+            </AffiliateLink>
+          </td>
+        ))}
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .vergleich-tabelle { overflow-x: auto; margin: var(--space-8) 0; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); }
+  .vergleich-tabelle table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+  .vergleich-tabelle th, .vergleich-tabelle td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border-subtle); vertical-align: top; }
+  .vergleich-tabelle thead th { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-tertiary); background: var(--bg-secondary); }
+  .vergleich-tabelle tbody th[scope="row"] { font-weight: 500; color: var(--text-secondary); background: var(--bg-secondary); width: 180px; }
+  .vergleich-tabelle tr:last-child td, .vergleich-tabelle tr:last-child th { border-bottom: 0; }
+</style>

@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+export const prerender = true;
+---
+<BaseLayout
+  title="Kontakt"
+  description="Kontaktiere die Finanzkompass-Redaktion: Feedback, Hinweise, Korrekturen, Kooperationen."
+>
+  <section class="article-hero">
+    <div class="container">
+      <div class="eyebrow">Kontakt</div>
+      <h1>Schreib uns.</h1>
+      <p class="dek">
+        Feedback, Korrekturhinweise oder Themen-Wünsche sind willkommen. Wir antworten in der Regel innerhalb von 48 Stunden, oft schneller.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container" style="max-width:780px">
+      <div class="prose">
+        <h2>Direkt per E-Mail</h2>
+        <p>
+          Allgemein: <a href="mailto:kontakt@finanzkompass.de">kontakt@finanzkompass.de</a><br />
+          Korrekturen/Fehler: <a href="mailto:korrektur@finanzkompass.de">korrektur@finanzkompass.de</a><br />
+          Datenschutz: <a href="mailto:datenschutz@finanzkompass.de">datenschutz@finanzkompass.de</a><br />
+          Cashback-Anträge: <a href="mailto:cashback@finanzkompass.de">cashback@finanzkompass.de</a> (oder über das <a href="/cashback">Formular</a>)
+        </p>
+
+        <h2>Postanschrift</h2>
+        <p>siehe <a href="/impressum">Impressum</a>.</p>
+
+        <h2>Was wir nicht beantworten</h2>
+        <ul>
+          <li>Persönliche Anlageberatung — wir sind keine Anlageberater und dürfen es nicht.</li>
+          <li>Medizinische Fragen zu psychischer Gesundheit — wende dich bitte an qualifizierte Fachpersonen.</li>
+          <li>Anfragen für bezahlte Tests, Sponsored Content oder "Editorial Partnerships".</li>
+        </ul>
+
+        <h2>PGP</h2>
+        <p>Für vertrauliche Hinweise (z.B. Whistleblower) bitte vorab per E-Mail anfragen — wir senden dann unseren Public Key.</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

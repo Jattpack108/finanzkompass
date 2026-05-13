@@ -1,0 +1,32 @@
+---
+import { affiliateHref } from '../lib/affiliate';
+
+export interface Props {
+  href: string;
+  produktName: string;
+  variant?: 'primary' | 'secondary' | 'link';
+  class?: string;
+}
+
+const { href, produktName, variant = 'primary', class: className = '' } = Astro.props;
+const cloaked = affiliateHref({
+  zielUrl: href,
+  produktName,
+  quelleSeite: Astro.url.pathname,
+});
+const btnClass =
+  variant === 'primary' ? 'btn btn-primary' :
+  variant === 'secondary' ? 'btn btn-secondary' :
+  'btn-link';
+---
+<a
+  href={cloaked}
+  class={`${btnClass} ${className}`.trim()}
+  rel="sponsored nofollow noopener"
+  target="_blank"
+  data-affiliate="true"
+  data-produkt={produktName}
+>
+  <slot />
+  <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+</a>

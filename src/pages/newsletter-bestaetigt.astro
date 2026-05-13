@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+export const prerender = false;
+const status = Astro.url.searchParams.get('status') ?? 'ok';
+---
+<BaseLayout
+  title="Newsletter-Bestätigung"
+  description="Bestätigung deiner Newsletter-Anmeldung."
+  noindex={true}
+>
+  <section class="article-hero">
+    <div class="container">
+      <div class="eyebrow">Newsletter</div>
+      {status === 'ok' ? (
+        <>
+          <h1>Vielen Dank — Anmeldung bestätigt.</h1>
+          <p class="dek">Du erhältst ab jetzt einmal pro Woche unseren Newsletter. Du kannst ihn jederzeit über den Link in jeder E-Mail wieder abbestellen.</p>
+          <p><a class="btn btn-primary" href="/">Zur Startseite</a></p>
+        </>
+      ) : (
+        <>
+          <h1>Bestätigungs-Link nicht gültig.</h1>
+          <p class="dek">Der Link ist entweder abgelaufen oder wurde schon einmal benutzt. Bitte trage dich erneut ein — wir schicken dir einen frischen Bestätigungs-Link.</p>
+          <p><a class="btn btn-primary" href="/#newsletter">Newsletter abonnieren</a></p>
+        </>
+      )}
+    </div>
+  </section>
+</BaseLayout>

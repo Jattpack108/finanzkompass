@@ -1,0 +1,271 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NewsletterFormular from '../components/NewsletterFormular.astro';
+import { getCollection } from 'astro:content';
+
+export const prerender = true;
+
+// Pull up to 3 most recent tests for the "Latest" grid.
+let tests: any[] = [];
+try {
+  const all = await getCollection('tests', ({ data }) => !data.draft);
+  tests = all
+    .sort((a, b) => +new Date(b.data.veroeffentlicht) - +new Date(a.data.veroeffentlicht))
+    .slice(0, 3);
+} catch (e) {
+  tests = [];
+}
+
+const issue = `Ausgabe Nr. 001 · Woche vom ${new Date().toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+---
+<BaseLayout
+  title="Finanzkompass"
+  description="Finanzkompass ist ein zweiköpfiges Redaktionsprojekt. Wir testen Neobroker, ETF-Plattformen und Wellbeing-Apps auf eigene Kosten — und geben einen Teil jeder Provision als Cashback zurück."
+>
+  <section class="hero">
+    <div class="container">
+      <div class="hero-eyebrow">
+        <span class="dot" aria-hidden="true"></span>
+        {issue}
+      </div>
+      <h1>
+        Finanztools &amp; Wellbeing,<br />
+        <em>geprüft.</em>
+      </h1>
+      <p class="hero-sub">
+        Finanzkompass ist ein zweiköpfiges Redaktionsprojekt. Wir testen Neobroker, ETF-Plattformen und Wellbeing-Apps auf eigene Kosten &mdash; und geben einen Teil jeder Provision als Cashback zurück.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#latest">
+          Aktuelle Tests
+          <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+        <a class="btn-link" href="/cashback">
+          Cashback erklärt
+          <svg class="arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <dl class="hero-meta">
+        <div><dt>Tests veröffentlicht</dt><dd class="mono">{tests.length}</dd></div>
+        <div><dt>Sponsored Content</dt><dd class="mono">0</dd></div>
+        <div><dt>Cashback ausgezahlt</dt><dd class="mono">€0</dd></div>
+        <div><dt>Ø Testdauer</dt><dd class="mono">14<span class="unit">Tage</span></dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="editors-pick">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="section-eyebrow"><span class="idx">01</span> · Cover Story</div>
+          <h2 class="section-title">Der Test der Woche</h2>
+        </div>
+        <div class="section-action">
+          <span>Wöchentlich aktualisiert</span>
+          <span class="mono">→</span>
+          <a href="/vergleiche">Alle Langtests</a>
+        </div>
+      </div>
+
+      <article class="cover-story">
+        <div class="cover-art" data-label="[ Depot-Screenshots im Vergleich · Trade Republic ↔ Scalable Capital ]">
+          <span class="cover-pill">Editor&rsquo;s Pick</span>
+        </div>
+        <div class="cover-body">
+          <div class="cover-cat">Finanzen · Neobroker</div>
+          <h3 class="cover-title">Trade Republic vs. Scalable Capital: 18&nbsp;Monate, ein Depot, eine ehrliche Antwort.</h3>
+          <p class="cover-dek">
+            Wir haben beide Accounts gleichzeitig geführt. Das Ergebnis hängt an einer Frage, die die meisten Vergleichsseiten nicht stellen.
+          </p>
+          <div class="cover-meta">
+            <span>Die Finanzkompass-Redaktion</span>
+            <span class="sep" aria-hidden="true"></span>
+            <span>13. Mai 2026</span>
+            <span class="sep" aria-hidden="true"></span>
+            <span>18 Min. Lesezeit</span>
+          </div>
+          <div class="cover-cta">
+            <a class="btn btn-primary" href="/vergleiche/trade-republic-vs-scalable-2026">
+              Vollständigen Test lesen
+              <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </a>
+            <span class="card-cashback">Cashback bei beiden verfügbar</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="latest" style="padding-top:0">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="section-eyebrow"><span class="idx">02</span> · Neueste Tests</div>
+          <h2 class="section-title">Diese Woche veröffentlicht</h2>
+        </div>
+        <div class="section-action">
+          <a href="/finanzen">Alle Tests ansehen <span class="mono">→</span></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container" style="padding-inline:0">
+      <div class="cards-3">
+        {tests.length === 0 ? (
+          <>
+            <article class="card">
+              <div class="card-cat"><span class="card-num">001</span> Finanzen · Neobroker</div>
+              <h3 class="card-title"><a href="/finanzen/trade-republic-test-2026">Trade Republic 2026: 18 Monate, ein ehrliches Fazit.</a></h3>
+              <p class="card-excerpt">Wir haben Trade Republic 18 Monate aktiv genutzt — mit Sparplan, Krypto und Einzelaktien. Was die App wirklich kann und wo sie an Grenzen stößt.</p>
+              <div class="card-foot">
+                <div class="left"><span>Die Redaktion</span><span class="sep" aria-hidden="true"></span><span>14 Min.</span></div>
+                <span class="card-logo" aria-hidden="true">TR</span>
+              </div>
+              <span class="card-cashback" style="position:absolute;top:var(--space-6);right:var(--space-8)">12&thinsp;€ Cashback</span>
+            </article>
+            <article class="card">
+              <div class="card-cat" style="color:var(--accent-wellbeing)"><span class="card-num">002</span> Wellbeing · Therapie</div>
+              <h3 class="card-title"><a href="/wellbeing/betterhelp-test-2026">BetterHelp 2026: Was Online-Therapie kann — und was nicht.</a></h3>
+              <p class="card-excerpt">Sechs Wochen, drei Therapeut:innen, ein ehrliches Fazit. Wir schauen unter die Haube von Matching-Algorithmus, Datenschutz und Kostenstruktur.</p>
+              <div class="card-foot">
+                <div class="left"><span>Die Redaktion</span><span class="sep" aria-hidden="true"></span><span>11 Min.</span></div>
+                <span class="card-logo" aria-hidden="true">BH</span>
+              </div>
+              <span class="card-cashback" style="position:absolute;top:var(--space-6);right:var(--space-8)">15&thinsp;€ Cashback</span>
+            </article>
+            <article class="card">
+              <div class="card-cat"><span class="card-num">003</span> Vergleiche · Neobroker</div>
+              <h3 class="card-title"><a href="/vergleiche/trade-republic-vs-scalable-2026">Trade Republic vs. Scalable Capital: Der direkte Vergleich.</a></h3>
+              <p class="card-excerpt">Gleiches ETF-Portfolio, gleicher Sparplan, 18 Monate parallel. Die Kostendifferenz war kleiner als erwartet — die Erlebnisdifferenz war größer.</p>
+              <div class="card-foot">
+                <div class="left"><span>Die Redaktion</span><span class="sep" aria-hidden="true"></span><span>18 Min.</span></div>
+                <span class="card-logo" aria-hidden="true">TS</span>
+              </div>
+              <span class="card-cashback" style="position:absolute;top:var(--space-6);right:var(--space-8)">Bis 15&thinsp;€</span>
+            </article>
+          </>
+        ) : tests.map((t, i) => (
+          <article class="card">
+            <div class="card-cat" style={t.data.saeule === 'wellbeing' ? 'color:var(--accent-wellbeing)' : ''}>
+              <span class="card-num">{String(i + 1).padStart(3, '0')}</span>
+              {t.data.saeule === 'wellbeing' ? 'Wellbeing' : 'Finanzen'} · {t.data.kategorie}
+            </div>
+            <h3 class="card-title"><a href={`/${t.data.saeule === 'wellbeing' ? 'wellbeing' : 'finanzen'}/${t.slug}`}>{t.data.titel}</a></h3>
+            <p class="card-excerpt">{t.data.beschreibung}</p>
+            <div class="card-foot">
+              <div class="left"><span>Die Redaktion</span><span class="sep" aria-hidden="true"></span><span>Test</span></div>
+              <span class="card-logo" aria-hidden="true">{t.data.produktAnbieter.slice(0,2).toUpperCase()}</span>
+            </div>
+            {t.data.cashbackVerfuegbar && t.data.cashbackBetrag && (
+              <span class="card-cashback" style="position:absolute;top:var(--space-6);right:var(--space-8)">{t.data.cashbackBetrag}&thinsp;€ Cashback</span>
+            )}
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="cashback" class="cashback-band cashback">
+    <div class="container cashback-grid">
+      <div>
+        <div class="cashback-eyebrow">
+          <span class="badge">Beta</span>
+          Unser Modell
+        </div>
+        <h2>Wir teilen unsere Provision mit dir.</h2>
+        <p>
+          Wenn du ein Produkt über unsere Links abschließt, zahlt der Anbieter uns eine Vermittlungsprovision. Einen Teil davon geben wir direkt an dich zurück &mdash; transparent aufgeschlüsselt, per PayPal oder SEPA-Überweisung.
+        </p>
+        <div class="cover-cta">
+          <a class="btn btn-secondary" href="/cashback">
+            So funktioniert Cashback
+            <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+          <a class="btn-link" href="/cashback#programme" style="border-color:var(--accent-secondary);color:var(--accent-secondary)">
+            Alle teilnehmenden Produkte
+          </a>
+        </div>
+      </div>
+
+      <div class="cb-schematic" aria-label="Cashback-Schema">
+        <div class="cb-row">
+          <span class="cb-step">01</span>
+          <div class="cb-label">Du schließt ein geprüftes Produkt ab<small>über einen Finanzkompass-Link</small></div>
+          <span class="cb-amount">Depot</span>
+        </div>
+        <div class="cb-row">
+          <span class="cb-step">02</span>
+          <div class="cb-label">Anbieter zahlt uns eine Provision<small>standardisierte Vermittlungsprovision</small></div>
+          <span class="cb-amount">€20,00</span>
+        </div>
+        <div class="cb-row">
+          <span class="cb-step">03</span>
+          <div class="cb-label">Wir decken Testkosten &amp; Redaktion<small>Hosting, Recherche, Lektorat</small></div>
+          <span class="cb-amount">€8,00</span>
+        </div>
+        <div class="cb-row">
+          <span class="cb-step">04</span>
+          <div class="cb-label">Du bekommst Cashback<small>per PayPal oder SEPA-Überweisung</small></div>
+          <span class="cb-amount is-cashback">+€12,00</span>
+        </div>
+        <div class="cb-foot">
+          <span>Beispiel · Trade Republic Depot</span>
+          <span>Stand 2026-05</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="section-eyebrow"><span class="idx">03</span> · Themen</div>
+          <h2 class="section-title">Drei Ressorts. Ein Standard.</h2>
+        </div>
+        <div class="section-action">
+          <a href="/methodik">Methodik <span class="mono">→</span></a>
+        </div>
+      </div>
+
+      <div class="cat-grid">
+        <a class="cat-card cat-finanzen" href="/finanzen">
+          <div class="cat-accent" aria-hidden="true"></div>
+          <div class="cat-head"><span class="cat-num">A</span><span class="cat-count">Neobroker · ETF · Banking</span></div>
+          <h3 class="cat-title">Finanzen</h3>
+          <p class="cat-desc">Neobroker, ETF-Sparpläne, Banking und Versicherungen &mdash; getestet gegen echte Konten, nicht gegen Demo-Daten.</p>
+          <div class="cat-foot">
+            <span>Finanzen ansehen</span>
+            <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+
+        <a class="cat-card cat-wellbeing" href="/wellbeing">
+          <div class="cat-accent" aria-hidden="true"></div>
+          <div class="cat-head"><span class="cat-num">B</span><span class="cat-count">Therapie · Mindfulness</span></div>
+          <h3 class="cat-title">Wellbeing</h3>
+          <p class="cat-desc">Online-Therapie, Mindfulness-Apps und mentale Gesundheit &mdash; wir testen mit echten Sitzungen, nicht mit Screenshots.</p>
+          <div class="cat-foot">
+            <span>Wellbeing ansehen</span>
+            <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+
+        <a class="cat-card cat-vergleiche" href="/vergleiche">
+          <div class="cat-accent" aria-hidden="true"></div>
+          <div class="cat-head"><span class="cat-num">C</span><span class="cat-count">Direkte Duelle</span></div>
+          <h3 class="cat-title">Vergleiche</h3>
+          <p class="cat-desc">Direkte Produkt-Duelle. Wir lesen das Kleingedruckte, das die Affiliate-Seiten überspringen.</p>
+          <div class="cat-foot">
+            <span>Vergleiche ansehen</span>
+            <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <NewsletterFormular variant="banner" />
+</BaseLayout>

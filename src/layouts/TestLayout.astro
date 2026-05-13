@@ -1,0 +1,110 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import VerdictBox from '../components/VerdictBox.astro';
+import MethodikKasten from '../components/MethodikKasten.astro';
+import Risikohinweis from '../components/Risikohinweis.astro';
+import ProsConsTable from '../components/ProsConsTable.astro';
+import AutorenBox from '../components/AutorenBox.astro';
+import QuellenListe from '../components/QuellenListe.astro';
+import Inhaltsverzeichnis from '../components/Inhaltsverzeichnis.astro';
+import { reviewSchema, breadcrumbSchema, formatGermanDate } from '../lib/seo';
+import type { CollectionEntry } from 'astro:content';
+
+export interface Props {
+  entry: CollectionEntry<'tests'>;
+  headings: Array<{ depth: number; slug: string; text: string }>;
+}
+
+const { entry, headings } = Astro.props;
+const d = entry.data;
+
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://finanzkompass.de';
+const path = Astro.url.pathname;
+const articleUrl = new URL(path, siteUrl).toString();
+
+const risikoVariant: 'investment' | 'therapie' | undefined =
+  d.saeule === 'finance' ? 'investment' :
+  d.saeule === 'wellbeing' && d.kategorie === 'online-therapie' ? 'therapie' :
+  undefined;
+
+const breadcrumb = breadcrumbSchema([
+  { name: 'Startseite', url: siteUrl },
+  { name: d.saeule === 'finance' ? 'Finanzen' : 'Wellbeing', url: `${siteUrl}/${d.saeule === 'finance' ? 'finanzen' : 'wellbeing'}` },
+  { name: d.titel, url: articleUrl },
+]);
+
+const review = reviewSchema({
+  produktName: d.produktName,
+  produktAnbieter: d.produktAnbieter,
+  bewertung: d.bewertung,
+  datePublished: d.veroeffentlicht.toISOString(),
+  dateModified: d.aktualisiert.toISOString(),
+  saeule: d.saeule,
+  url: articleUrl,
+  beschreibung: d.beschreibung,
+});
+---
+<BaseLayout
+  title={d.titel}
+  description={d.beschreibung}
+  jsonLd={[review, breadcrumb]}
+>
+  <article>
+    <header class="article-hero">
+      <div class="container" style="max-width:960px">
+        <div class="eyebrow">
+          {d.saeule === 'finance' ? 'Finanzen' : 'Wellbeing'} · {d.kategorie}
+        </div>
+        <h1>{d.titel}</h1>
+        <p class="dek">{d.beschreibung}</p>
+        <div class="article-meta">
+          <strong>Die Finanzkompass-Redaktion</strong>
+          <span class="sep" aria-hidden="true"></span>
+          <span>Zuletzt aktualisiert: {formatGermanDate(d.aktualisiert)}</span>
+          {d.testdauerTage && (
+            <>
+              <span class="sep" aria-hidden="true"></span>
+              <span>{d.testdauerTage} Tage Test</span>
+            </>
+          )}
+        </div>
+      </div>
+    </header>
+
+    <div class="container article-shell" style="max-width:1120px">
+      <div class="prose">
+        <Inhaltsverzeichnis headings={headings} />
+
+        <MethodikKasten produktName={d.produktName} testdauerTage={d.testdauerTage} />
+
+        <slot />
+
+        <ProsConsTable pros={d.pros} cons={d.cons} />
+
+        <h2 id="fazit">Fazit</h2>
+        <p>{d.fazit}</p>
+
+        {risikoVariant && <Risikohinweis variant={risikoVariant} />}
+
+        <AutorenBox testdatum={formatGermanDate(d.aktualisiert)} />
+
+        <QuellenListe quellen={d.quellen} />
+      </div>
+
+      <aside>
+        <VerdictBox
+          produktName={d.produktName}
+          produktAnbieter={d.produktAnbieter}
+          bewertung={d.bewertung}
+          bestFuer={d.bestFuer}
+          preisInfo={d.preisInfo}
+          affiliateUrl={d.affiliateUrl}
+          cashbackVerfuegbar={d.cashbackVerfuegbar}
+          cashbackBetrag={d.cashbackBetrag}
+          saeule={d.saeule}
+          empfohlenBadge={d.bewertung >= 8.5}
+        />
+      </aside>
+    </div>
+  </article>
+</BaseLayout>

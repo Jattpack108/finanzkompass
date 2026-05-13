@@ -1,0 +1,17 @@
+---
+export interface Props {
+  testdatum?: string;
+}
+const { testdatum } = Astro.props;
+const datum = testdatum ?? new Date().toLocaleDateString('de-DE', { month: 'long', year: 'numeric' });
+---
+<aside class="autoren-box">
+  <div class="avatar" aria-hidden="true">FK</div>
+  <div>
+    <div class="label">Autor</div>
+    <div class="name">Die Finanzkompass-Redaktion</div>
+    <div style="font-size:var(--text-sm);color:var(--text-secondary);margin-top:4px">
+      Getestet im {datum} · <a href="/methodik">Wie wir testen</a>
+    </div>
+  </div>
+</aside>

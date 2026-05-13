@@ -1,0 +1,60 @@
+---
+const year = new Date().getFullYear();
+const buildDate = new Date().toISOString().slice(0, 10).replace(/-/g, '.');
+---
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="brand-mark">Finanzkompass<span class="dot">.</span></span>
+        <p>Ein unabhängiges, zweiköpfiges Redaktionsprojekt. Tests zu Finanzen und Wellbeing seit 2026.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Ressorts</h4>
+        <ul>
+          <li><a href="/finanzen">Finanzen</a></li>
+          <li><a href="/wellbeing">Wellbeing</a></li>
+          <li><a href="/vergleiche">Vergleiche</a></li>
+          <li><a href="/ratgeber">Ratgeber</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Über uns</h4>
+        <ul>
+          <li><a href="/ueber-uns">Die Redaktion</a></li>
+          <li><a href="/methodik">Testmethodik</a></li>
+          <li><a href="/transparenz">Redaktionsstandards</a></li>
+          <li><a href="/cashback">Cashback-Programm</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Rechtliches</h4>
+        <ul>
+          <li><a href="/impressum">Impressum</a></li>
+          <li><a href="/datenschutz">Datenschutz</a></li>
+          <li><a href="/transparenz#risikohinweis">Risikohinweis</a></li>
+          <li><a href="/transparenz">Affiliate-Hinweis</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Kontakt</h4>
+        <ul>
+          <li><a href="/#newsletter">Newsletter (wöchentlich)</a></li>
+          <li><a href="/rss.xml">RSS-Feed</a></li>
+          <li><a href="/kontakt">Kontakt</a></li>
+          <li><a href="mailto:kontakt@finanzkompass.de">kontakt@finanzkompass.de</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="colophon">
+        <span>© {year} Finanzkompass · Ein unabhängiges Redaktionsprojekt</span>
+        <span class="dot" aria-hidden="true"></span>
+        <span>Set in Fraunces &amp; Inter</span>
+      </div>
+      <div class="colophon">
+        <span class="mono">v1.0 · build {buildDate}</span>
+      </div>
+    </div>
+  </div>
+</footer>

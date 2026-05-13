@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+export const prerender = true;
+---
+<BaseLayout
+  title="Cashback"
+  description="So funktioniert das Finanzkompass-Cashback: Antrag stellen, Bestätigung einreichen, Auszahlung per PayPal oder SEPA."
+>
+  <section class="article-hero">
+    <div class="container">
+      <div class="eyebrow">Cashback</div>
+      <h1>Deine Provision. Geteilt.</h1>
+      <p class="dek">
+        Bei ausgewählten Produkten geben wir einen Teil unserer Affiliate-Provision an dich zurück. Antrag stellen, Nachweis schicken, Auszahlung erhalten — typischerweise nach 30 Tagen Stornofrist.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container" style="max-width:920px">
+      <div class="prose">
+        <h2 id="so-funktionierts">So funktioniert es</h2>
+        <ol>
+          <li>Du eröffnest ein Produkt über einen unserer Links (z.B. Trade Republic Depot).</li>
+          <li>Nach erfolgreichem Abschluss bekommst du vom Anbieter eine Bestätigung — typischerweise eine Order- oder Kunden-Nummer.</li>
+          <li>Du füllst unten das Cashback-Formular aus: E-Mail, Produkt, Bestätigungs-ID, deine PayPal-Adresse.</li>
+          <li>Wir warten die Stornofrist des Anbieters ab (meist 30 Tage), dann zahlen wir aus.</li>
+          <li>Auszahlung per PayPal (sofort) oder SEPA (1–2 Werktage).</li>
+        </ol>
+
+        <h2 id="programme">Teilnehmende Programme</h2>
+        <p>Aktuell ist Cashback bei folgenden Produkten verfügbar (Beträge können sich ändern, jeweils aktueller Stand im einzelnen Test):</p>
+        <ul>
+          <li><strong>Trade Republic</strong> — 12 € Cashback nach Depot-Eröffnung &amp; erster Order</li>
+          <li><strong>Scalable Capital</strong> — 15 € Cashback nach Depot-Eröffnung &amp; PRIME+-Aktivierung</li>
+          <li><strong>BetterHelp</strong> — 15 € Cashback nach erstem bezahlten Monat</li>
+          <li><strong>WISO Steuer</strong> — 5 € Cashback nach Abgabe der Steuererklärung</li>
+        </ul>
+
+        <h2 id="antrag">Cashback-Antrag</h2>
+
+        <form class="fk-form" method="post" action="/api/cashback-antrag" data-cashback-form>
+          <div>
+            <label for="cb-email">E-Mail-Adresse</label>
+            <input id="cb-email" name="email" type="email" required autocomplete="email" />
+            <div class="hint">Für die Abwicklung — wir nutzen sie ausschließlich zu diesem Zweck.</div>
+          </div>
+
+          <div>
+            <label for="cb-produkt">Produkt</label>
+            <select id="cb-produkt" name="produkt_name" required>
+              <option value="">Bitte auswählen</option>
+              <option value="Trade Republic">Trade Republic</option>
+              <option value="Scalable Capital">Scalable Capital</option>
+              <option value="BetterHelp">BetterHelp</option>
+              <option value="WISO Steuer">WISO Steuer</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="cb-bestaetigung">Bestätigungs-ID / Order-Nummer</label>
+            <input id="cb-bestaetigung" name="bestaetigungs_id" type="text" required />
+            <div class="hint">Aus der Anbieter-Bestätigung. Sie hilft uns, die Provision deinem Antrag zuzuordnen.</div>
+          </div>
+
+          <div>
+            <label for="cb-paypal">PayPal-Adresse (für Auszahlung)</label>
+            <input id="cb-paypal" name="paypal_email" type="email" />
+            <div class="hint">Optional. Alternativ tragen wir später eine SEPA-IBAN nach.</div>
+          </div>
+
+          <div>
+            <label>
+              <input type="checkbox" name="datenschutz_ok" required style="margin-right:8px" />
+              Ich habe die <a href="/datenschutz">Datenschutzerklärung</a> gelesen und bin mit der Verarbeitung meiner Daten zur Abwicklung des Cashbacks einverstanden.
+            </label>
+          </div>
+
+          <div>
+            <button class="btn btn-primary" type="submit">Cashback beantragen</button>
+          </div>
+
+          <p data-cashback-feedback hidden style="font-size:var(--text-sm)"></p>
+        </form>
+
+        <h2 id="ablauf">Zeitlicher Ablauf</h2>
+        <p>Nach Eingang deines Antrags bestätigen wir innerhalb von 48 Stunden den Erhalt. Sobald der Anbieter uns die Provision freigibt (typischerweise nach 30 Tagen Stornofrist), zahlen wir innerhalb von 5 Werktagen aus.</p>
+
+        <h2 id="steuern">Steuerlicher Hinweis</h2>
+        <p>Cashback-Auszahlungen sind beim Empfänger ggf. steuerpflichtig (Einkünfte aus sonstigen Leistungen, §22 Nr. 3 EStG). Wir empfehlen, größere Cashback-Beträge gegenüber dem Finanzamt anzugeben. Bei Fragen wende dich an einen Steuerberater.</p>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    document.querySelectorAll('form[data-cashback-form]').forEach((form) => {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fb = form.querySelector('[data-cashback-feedback]');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+        try {
+          const res = await fetch('/api/cashback-antrag', { method: 'POST', body: new FormData(form) });
+          const json = await res.json();
+          if (fb) {
+            fb.hidden = false;
+            fb.textContent = json.ok
+              ? 'Antrag erhalten — wir melden uns innerhalb von 48 Stunden bei dir.'
+              : (json.error || 'Antrag fehlgeschlagen.');
+            fb.style.color = json.ok ? 'var(--success)' : 'var(--danger)';
+          }
+          if (json.ok && form instanceof HTMLFormElement) form.reset();
+        } catch (err) {
+          if (fb) { fb.hidden = false; fb.textContent = 'Netzwerkfehler.'; fb.style.color = 'var(--danger)'; }
+        } finally {
+          if (submitBtn) submitBtn.disabled = false;
+        }
+      });
+    });
+  </script>
+</BaseLayout>

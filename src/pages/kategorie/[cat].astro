@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const tests = await getCollection('tests', ({ data }) => !data.draft);
+  const cats = [...new Set(tests.map((t) => t.data.kategorie))];
+  return cats.map((cat) => ({
+    params: { cat },
+    props: {
+      cat,
+      items: tests.filter((t) => t.data.kategorie === cat),
+    },
+  }));
+}
+
+const { cat, items } = Astro.props;
+const labelMap: Record<string, string> = {
+  'neobroker': 'Neobroker',
+  'direktbank': 'Direktbank',
+  'banking-app': 'Banking-App',
+  'kreditkarte': 'Kreditkarte',
+  'tagesgeld': 'Tagesgeld',
+  'etf-sparplan': 'ETF-Sparplan',
+  'steuersoftware': 'Steuersoftware',
+  'altersvorsorge': 'Altersvorsorge',
+  'versicherung': 'Versicherung',
+  'online-therapie': 'Online-Therapie',
+  'mindfulness-app': 'Mindfulness-App',
+  'crypto-hardware': 'Crypto-Hardware',
+  'investment-tool': 'Investment-Tool',
+};
+const label = labelMap[cat] ?? cat;
+---
+<BaseLayout
+  title={`${label} – Tests`}
+  description={`Alle Finanzkompass-Tests aus der Kategorie ${label}.`}
+>
+  <section class="article-hero">
+    <div class="container">
+      <div class="eyebrow">Kategorie</div>
+      <h1>{label}</h1>
+      <p class="dek">{items.length} {items.length === 1 ? 'Test' : 'Tests'} in dieser Kategorie.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container" style="padding-inline:0">
+      <div class="cards-3">
+        {items.map((t) => (
+          <article class="card" style="position:relative">
+            <div class="card-cat" style={t.data.saeule === 'wellbeing' ? 'color:var(--accent-wellbeing)' : ''}>
+              {t.data.saeule === 'wellbeing' ? 'Wellbeing' : 'Finanzen'} · {t.data.kategorie}
+            </div>
+            <h3 class="card-title">
+              <a href={`/${t.data.saeule === 'wellbeing' ? 'wellbeing' : 'finanzen'}/${t.id.replace(/\.md$/, '')}`}>
+                {t.data.titel}
+              </a>
+            </h3>
+            <p class="card-excerpt">{t.data.beschreibung}</p>
+            <div class="card-foot">
+              <div class="left"><span>Die Redaktion</span><span class="sep" aria-hidden="true"></span><span>Test</span></div>
+              <span class="card-logo" aria-hidden="true">{t.data.produktAnbieter.slice(0,2).toUpperCase()}</span>
+            </div>
+            {t.data.cashbackVerfuegbar && t.data.cashbackBetrag && (
+              <span class="card-cashback" style="position:absolute;top:var(--space-6);right:var(--space-8)">{t.data.cashbackBetrag}&thinsp;€ Cashback</span>
+            )}
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

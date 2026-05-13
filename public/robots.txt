@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Crawlers should never follow these — they are cloaked outbound redirects
+Disallow: /api/affiliate-redirect
+
+# Confirmation landing should not be indexed
+Disallow: /newsletter-bestaetigt
+
+Sitemap: https://finanzkompass.de/sitemap-index.xml

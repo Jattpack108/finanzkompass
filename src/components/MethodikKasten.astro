@@ -1,0 +1,51 @@
+---
+export interface Props {
+  testdauerTage?: number;
+  pruefkriterien?: string[];
+  produktName: string;
+}
+const {
+  testdauerTage,
+  pruefkriterien = [
+    'Kostenstruktur (Order-/Verwaltungsgebühren, Spreads, versteckte Kosten)',
+    'Produktauswahl & Verfügbarkeit',
+    'App-Performance und Usability auf iOS + Android',
+    'Kundenservice (Antwortzeit, Qualität, Erreichbarkeit)',
+    'Sicherheit & Datenschutz (Verwahrung, DSGVO, Zwei-Faktor)',
+  ],
+  produktName,
+} = Astro.props;
+---
+<section class="methodik-kasten">
+  <div class="label">So haben wir {produktName} getestet</div>
+  <ul>
+    {pruefkriterien.map((k) => <li>{k}</li>)}
+  </ul>
+  {testdauerTage && (
+    <p class="testdauer">
+      <strong>Testdauer:</strong> {testdauerTage} Tage mit echtem Geld auf eigenem Account.
+      <a href="/methodik">Vollständige Methodik →</a>
+    </p>
+  )}
+</section>
+
+<style>
+  .methodik-kasten {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-6) var(--space-8);
+    margin: var(--space-8) 0;
+  }
+  .label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-3);
+  }
+  .methodik-kasten ul { margin: 0; padding-left: 1.2em; display:flex; flex-direction: column; gap: 6px; }
+  .methodik-kasten li { font-size: var(--text-sm); color: var(--text-secondary); }
+  .testdauer { font-size: var(--text-sm); margin: var(--space-4) 0 0; color: var(--text-secondary); }
+</style>
